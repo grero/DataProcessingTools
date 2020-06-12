@@ -13,6 +13,6 @@ def level(cwd=None):
     if pp.isdigit():
         ll = 'day'
     else:
-        numstr = [str(i) for i in xrange(10)]
+        numstr = [str(i) for i in range(10)]
         ll = pp.strip(''.join(numstr))
     return ll
