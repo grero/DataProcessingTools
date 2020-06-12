@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="DataProcessingTools",
-      version="0.1.1",
+      version="0.2.0",
       description="""Tools for processing data with hierarchical organization""",
       url="https://github.com/grero/DataProcessingTools.git",
       author="Roger Herikstad",
