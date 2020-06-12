@@ -40,3 +40,4 @@ class PSTH(DPObject):
             sigma = self.data[idx, :].std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
+        return fig
