@@ -24,15 +24,19 @@ class PSTH(DPObject):
                 dd[t] = l
             self.trial_labels = np.array([dd[t] for t in range(ntrials)])
 
-    def plot(self, fig=None):
+    def plot(self, i=None, fig=None):
         if fig is None:
             fig = gcf()
         ax = fig.add_subplot(111)
         labels = np.unique(self.trial_labels)
+        if i is not None:
+            # plot a particular label
+            labels = labels[i:i+1]
+
         for li in range(len(labels)):
             label = labels[li]
             idx = self.trial_labels == label
-            mu = self.N[idx, :].mean(0)
-            sigma = self.N[idx, :].std(0)
+            mu = self.counts[idx, :].mean(0)
+            sigma = self.counts[idx, :].std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
