@@ -11,7 +11,7 @@ class PSTH(DPObject):
             jj = np.searchsorted(bins, spiketimes[i])
             if 0 <= jj < np.size(bins):
                 counts[trialidx[i], jj] += 1
-        self.counts = counts
+        self.data = counts
         self.bins = bins
         self.ntrials = ntrials
         if triallabels is None:
@@ -36,7 +36,7 @@ class PSTH(DPObject):
         for li in range(len(labels)):
             label = labels[li]
             idx = self.trial_labels == label
-            mu = self.counts[idx, :].mean(0)
-            sigma = self.counts[idx, :].std(0)
+            mu = self.data[idx, :].mean(0)
+            sigma = self.data[idx, :].std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
