@@ -16,3 +16,6 @@ def test_psth():
 
     idx = psth.update_idx(201)
     assert idx == 100
+
+    fig = psth.plot()
+    assert len(fig.axes[0].lines) == 9
