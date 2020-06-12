@@ -9,4 +9,4 @@ def test_psth():
     bins = np.arange(0, 100.0, 2.0)
     psth = DPT.psth.PSTH(spiketimes, trialidx, bins, trial_labels)
 
-    assert psth.counts.shape[0] == 101
+    assert psth.data.shape[0] == 101
