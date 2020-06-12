@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/grero/DataProcessingTools/badge.svg?branch=master)](https://coveralls.io/github/grero/DataProcessingTools?branch=master)
 
 ## Introduction
-This package contains tools for navigating and managing a data organized in a hierarcical manner
+This package contains tools for navigating and managing a data organized in a hierarchical manner
 
 ## Usage
 
