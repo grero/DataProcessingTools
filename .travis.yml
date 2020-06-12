@@ -6,7 +6,7 @@ env:
 
 before_install:
     - pip install coveralls
-    - pip install qt
+    - pip install PyQt5
     - pip install pytest-qt
     - pip install pytest-xvfb==1.1.0
     - pip install pytest-ordering==0.5
