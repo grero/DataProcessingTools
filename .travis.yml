@@ -1,0 +1,23 @@
+language: python
+python:
+    - "3.6"
+env:
+  - NUMBA_DISABLE_JIT=1
+
+before_install:
+    - sudo bash install_qt.sh
+    - pip install coveralls
+    - pip install pytest-qt
+    - pip install pytest-xvfb==1.1.0
+    - pip install pytest-ordering==0.5
+
+install:
+    - pip install -r requirements.txt
+    - pip install .
+
+script:
+    - coverage run --source DataProcessingTools -m py.test -s -q
+
+after_success:
+    - coverage report
+    - coveralls
