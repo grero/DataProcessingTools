@@ -13,4 +13,6 @@ import DataProcessingTools as DPT
 
 cwd = "Pancake/20130923/session01/array01"
 ll = DPT.levels.level(cwd)
+
+rr = DPHT.resolve_level("session", cwd)
 ```
