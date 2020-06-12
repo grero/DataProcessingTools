@@ -10,3 +10,9 @@ def test_psth():
     psth = DPT.psth.PSTH(spiketimes, trialidx, bins, trial_labels)
 
     assert psth.data.shape[0] == 101
+
+    idx = psth.update_idx(1)
+    assert idx == 1
+
+    idx = psth.update_idx(201)
+    assert idx == 100
