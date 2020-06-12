@@ -1,3 +1,1 @@
-import levels
-import objects
-import psth
+from . import levels, objects, psth
