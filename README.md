@@ -18,7 +18,10 @@ cwd = "Pancake/20130923/session01/array01"
 ll = DPT.levels.level(cwd)
 
 # Resolve the relative path from `cwd` to the `session` directory.
-rr = DPHT.resolve_level("session", cwd)
+rr = DPT.levels.resolve_level("session", cwd)
+
+# Find all e.g. cell directories under the current directory
+celldirs = DPT.levels.get_level_dirs("cell", cwd)
 ```
 
 ### Objects
