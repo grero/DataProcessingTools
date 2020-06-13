@@ -1,5 +1,8 @@
 import os
-levels = ['day', 'session', 'array', 'channel']
+import glob
+
+levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
+level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel[0-9]*", "cell[0-9]*"]
 
 
 def level(cwd=None):
