@@ -13,8 +13,11 @@ This package contains tools for navigating and managing a data organized in a hi
 import DataProcessingTools as DPT
 
 cwd = "Pancake/20130923/session01/array01"
+
+# Get the current level
 ll = DPT.levels.level(cwd)
 
+# Resolve the relative path from `cwd` to the `session` directory.
 rr = DPHT.resolve_level("session", cwd)
 ```
 
