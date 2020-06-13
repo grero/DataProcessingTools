@@ -19,3 +19,20 @@ def test_psth():
 
     fig = psth.plot()
     assert len(fig.axes[0].lines) == 9
+
+    spiketimes = np.cumsum(np.random.exponential(0.3, 100000))
+    trialidx = np.random.random_integers(0, 100, (100000, ))
+
+    psth2 = DPT.psth.PSTH(spiketimes, trialidx, bins, trial_labels)
+    ppsth = DPT.objects.DPObjects([psth])
+    ppsth.append(psth2)
+    assert ppsth[0] == psth
+    assert ppsth[1] == psth2
+
+    fig = ppsth.plot(0)
+    assert len(fig.axes[0].lines) == 9
+    ppsth.plot(1, fig=fig)
+    assert len(fig.axes[0].lines) == 9
+
+    ppsth.plot(0, fig=fig, overlay=True)
+    assert len(fig.axes[0].lines) == 18
