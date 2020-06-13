@@ -24,10 +24,12 @@ class PSTH(DPObject):
                 dd[t] = l
             self.trial_labels = np.array([dd[t] for t in range(ntrials)])
 
-    def plot(self, i=None, fig=None):
+    def plot(self, i=None, fig=None, overlay=False):
         if fig is None:
             fig = gcf()
         ax = fig.add_subplot(111)
+        if not overlay:
+            ax.clear()
         labels = np.unique(self.trial_labels)
         if i is not None:
             # plot a particular label
