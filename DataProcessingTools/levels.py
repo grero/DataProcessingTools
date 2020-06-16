@@ -57,3 +57,22 @@ def get_level_dirs(target_level, cwd=None):
         patterns = level_patterns_s[this_idx+1:target_idx+1]
         dirs = glob.glob(os.path.join(cwd, *patterns))
     return dirs
+
+
+def get_level_name(target_level, cwd=None):
+    """
+    Return the name of the requested level
+    """
+    if cwd is None:
+        cwd = os.getwd()
+
+    this_level = level(cwd)
+    this_idx = levels.index(this_level)
+    target_idx = levels.index(target_level)
+    i = this_idx
+    cw = cwd
+    pp = ""
+    while i >= target_idx:
+        cw, pp = os.path.split(cw)
+        i -= 1
+    return pp

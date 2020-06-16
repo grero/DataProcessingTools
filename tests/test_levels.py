@@ -30,3 +30,7 @@ def test_level():
     assert dirs[0] == "Pancake/20130923/session01/array02/./../array02"
 
     os.chdir(cwd)
+
+    dir1 = "Pancake/20130923/session01/array02/channel33"
+    ln = DPT.levels.get_level_name("session", dir1)
+    assert ln == "session01"
