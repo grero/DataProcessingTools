@@ -27,8 +27,11 @@ class DPObject():
         """
         Return an index into this object for the requested level.
         """
-        level_names = [levels.get_level_name(level, d)
-                       for d in self.dirs]
+        level_names = []
+        for d in self.dirs:
+            q = levels.get_level_path(level, d)
+            level_names.append(q)
+
         unique_names = []
         for l in level_names:
             if l not in unique_names:
