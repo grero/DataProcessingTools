@@ -40,7 +40,11 @@ class DPObject():
         idx = np.zeros((len(self.setidx), ), dtype=np.int)
         for i in range(len(self.setidx)):
             idx[i] = unique_names.index(level_names[self.setidx[i]])
-        return idx
+
+        def func(i):
+            return np.where(idx == i)[0]
+
+        return func
 
     def append(self, obj):
         """

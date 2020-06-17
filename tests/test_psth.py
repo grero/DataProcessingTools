@@ -47,5 +47,9 @@ def test_psth():
     assert len(psth.setidx) == 202
 
     idx = psth.getindex("cell")
-    data = psth.data[idx == 1, :]
+    data = psth.data[idx(1), :]
     assert (data == psth2.data).all()
+
+    idx = psth.getindex("session")
+    data = psth.data[idx(0), :]
+    assert (data == psth.data).all()

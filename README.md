@@ -52,5 +52,19 @@ ppsth.plot(1, overlay=False)
 psth1.append(psth2)
 
 # To access the data for the first cell in this compound object
-cell1_idx = psth1.setindex == 0
+cell_idx = psth1.getindex("cell")
+
+# The above returns a function that gives the index into the object's data
+# corresponding to the cell level.
+
+# To  access the data related to the first cell, we can do this
+cell1_data = psth1.data[cell_idx(0),:]
+
+# If, on the other hand, we want to group the data by session, we could do
+
+session_idx = psth1.getindex("session")
+session1_data = psth1.data[session_idx(0),:]
+
+# For this example, since we only have a single session, we would be looking
+# at all the data.
 ```
