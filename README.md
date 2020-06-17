@@ -32,18 +32,25 @@ trialidx = np.random.random_integers(0, 100, (100000, ))
 trial_labels = np.random.random_integers(1, 9, (101, ))
 bins = np.arange(0, 100.0, 2.0)
 psth1 = DPT.psth.PSTH(spiketimes, trialidx, bins, trial_labels)
+psth1.dirs = ["Pancake/20130923/session01/array01/channel001/cell01"]
 
 spiketimes = np.cumsum(np.random.exponential(0.3, 100000))
 trialidx = np.random.random_integers(0, 100, (100000, ))
 psth2 = DPT.psth.PSTH(spiketimes, trialidx, bins, trial_labels)
+psth2.dirs = ["Pancake/20130923/session01/array01/channel002/cell01"]
 
-# Concatenate the two PSTH objects into a list
+# Concatenate the two PSTH objects into a list for plotting
 ppsth = DPT.objects.DPObjects([psth1, psth2])
 
 # Plot the first PSTH
 fig = ppsth.plot(0)
 
-#Plot the second PSTH without overlay
+# Plot the second PSTH without overlay
 ppsth.plot(1, overlay=False)
-```
 
+# Append psth2 to psth1, creating an object spanning mulitple sets
+psth1.append(psth2)
+
+# To access the data for the first cell in this compound object
+cell1_idx = psth1.setindex == 0
+```
