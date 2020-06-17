@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib.pyplot import gcf
 from . objects import DPObject
+from . import levels
 
 
 class PSTH(DPObject):
@@ -23,6 +24,19 @@ class PSTH(DPObject):
             for t, l in zip(trialidx, triallabels):
                 dd[t] = l
             self.trial_labels = np.array([dd[t] for t in range(ntrials)])
+
+        # index to keep track of sets, e.g. trials
+        self.setidx = [0 for i in range(self.ntrials)]
+
+    def append(self, psth):
+        if not (self.bins == psth.bins).all():
+            ValueError("Incompatible bins")
+
+        DPObject.append(self, psth)
+        self.data = np.concatenate((self.data, psth.data), axis=0)
+        self.trial_labels = np.concatenate((self.trial_labels, psth.trial_labels),
+                                           axis=0)
+        self.ntrials = self.ntrials + psth.ntrials
 
     def plot(self, i=None, fig=None, overlay=False):
         if fig is None:
