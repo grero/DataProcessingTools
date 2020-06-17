@@ -34,7 +34,6 @@ def resolve_level(target_level, cwd=None):
     pl = ["."]
     for i in range(0, this_idx - target_idx+1):
         pl.append("..")
-    print(pl)
     return os.path.join(*pl)
 
 
@@ -76,3 +75,16 @@ def get_level_name(target_level, cwd=None):
         cw, pp = os.path.split(cw)
         i -= 1
     return pp
+
+def get_level_path(target_level, cwd=None):
+    """
+    Return the full path to requested level
+    """
+    if cwd is None:
+        cwd = os.getwd()
+    q = ""
+    for ll in levels:
+        q = os.path.join(q, get_level_name(ll, cwd))
+        if ll == target_level:
+            break
+    return q
