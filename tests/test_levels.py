@@ -34,3 +34,6 @@ def test_level():
     dir1 = "Pancake/20130923/session01/array02/channel33"
     ln = DPT.levels.get_level_name("session", dir1)
     assert ln == "session01"
+
+    level_path = DPT.levels.get_level_path("session", dir1)
+    assert level_path == "Pancake/20130923/session01"
