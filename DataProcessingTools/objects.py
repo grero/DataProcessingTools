@@ -23,10 +23,13 @@ class DPObject():
         """
         return max(0, min(index, self.data.shape[0]-1))
 
-    def getindex(self, level):
+    def getindex(self, level=None):
         """
         Return an index into this object for the requested level.
         """
+        if level is None:
+            return lambda i: None
+
         level_names = []
         for d in self.dirs:
             q = levels.get_level_path(level, d)
