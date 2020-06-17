@@ -29,6 +29,9 @@ class DPObject():
         """
         if level is None:
             return lambda i: None
+        elif level == "trial":
+            # `trial` is just a catch all for the lowest level
+            return lambda i: [i] if 0 <= i < len(self.setidx) else []
 
         level_names = []
         for d in self.dirs:
