@@ -1,13 +1,23 @@
 import numpy as np
 from matplotlib.pyplot import gcf
-from . objects import DPObject
+from .objects import DPObject
 from . import levels
+from .raster import Raster
 
 
 class PSTH(DPObject):
-    def __init__(self, spiketimes, trialidx, bins, triallabels=None):
+    def __init__(self, bins, spiketimes=None, trialidx=None, triallabels=None,
+                 trial_events=None):
+        tmin = bins[0]
+        tmax = bins[-1]
+        if spiketimes is None:
+            # attempt to load from the current directory
+            raster = Raster(tmin, tmax, trial_event=trial_events)
+            spiketimes = raster.spiketimes
+            trialidx = raster.trialidx
+            triallabels = raster.trial_labels
         ntrials = trialidx.max()+1
-        counts = np.zeros((ntrials, np.size(bins)))
+        counts = np.zeros((ntrials, np.size(bins)), dtype=np.int)
         for i in range(np.size(spiketimes)):
             jj = np.searchsorted(bins, spiketimes[i])
             if 0 <= jj < np.size(bins):

@@ -16,7 +16,7 @@ def test_level():
     os.chdir(tdir)
     dir1 = "Pancake/20130923/session01/array02/channel33"
     dir2 = "Pancake/20130923/session01/array02/channel34"
-    for d in [dir1,dir2]:
+    for d in [dir1, dir2]:
         if not os.path.isdir(d):
             os.makedirs(d)
     dirs = DPT.levels.get_level_dirs("channel", "Pancake/20130923/session01/array02")
