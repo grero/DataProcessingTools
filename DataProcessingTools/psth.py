@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib.pyplot import gcf
-from . objects import DPObject
+from .objects import DPObject
 from . import levels
 
 
