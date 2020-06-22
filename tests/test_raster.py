@@ -32,3 +32,8 @@ def test_load():
             raster = DPT.raster.Raster(-0.1, 0.5, trial_events)
             assert (raster.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
             assert np.isclose(raster.spiketimes, [0.0, 0.05, 0.2, 0.3, 0.4, 0.0, 0.1, 0.2, 0.3]).all()
+
+        os.remove(os.path.join(pth, "unit.mat"))
+        os.rmdir("Pancake/20130923/session01/array01/channel001/cell01")
+        os.rmdir("Pancake/20130923/session01/array01/channel001")
+        os.rmdir("Pancake/20130923/session01/array01")
