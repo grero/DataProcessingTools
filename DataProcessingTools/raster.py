@@ -40,11 +40,3 @@ class Raster(DPObject):
             # plot everything
             idx = range(len(self.spiketimes))
         ax.plot(self.spiketimes[idx], self.trialidx[idx], '.')
-
-
-def test_raster():
-    spiketimes = np.cumsum(np.random.exponential(0.3,1000000))
-    trial_event = np.arange(100,30000,3000)
-    raster = Raster(spiketimes, trial_event, -50,100,None)
-    raster.plot()
-
