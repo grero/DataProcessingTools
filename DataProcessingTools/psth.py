@@ -17,7 +17,7 @@ class PSTH(DPObject):
             trialidx = raster.trialidx
             triallabels = raster.trial_labels
         ntrials = trialidx.max()+1
-        counts = np.zeros((ntrials, np.size(bins)))
+        counts = np.zeros((ntrials, np.size(bins)), dtype=np.int)
         for i in range(np.size(spiketimes)):
             jj = np.searchsorted(bins, spiketimes[i])
             if 0 <= jj < np.size(bins):
