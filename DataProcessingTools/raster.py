@@ -6,19 +6,19 @@ import os
 
 
 class Raster(DPObject):
-    def __init__(self, tmin, tmax, spiketimes=None, 
-                 trial_event=None,  trial_labels=None,
-                 dirs=None):
-        bidx = np.digitize(spiketimes, trial_event+tmin)
+    def __init__(self, tmin, tmax, trial_event=None,
+                 spiketimes=None,
+                 trial_labels=None, dirs=None):
         if spiketimes is None:
             spiketrain = Spiketrain()
-            spiketimes = spiketrain.timestamps
+            spiketimes = spiketrain.timestamps.flatten()
         if trial_event is None:
             # TODO: Load trials here
             pass
         if trial_labels is None:
             trial_labels = np.arange(len(trial_event))
 
+        bidx = np.digitize(spiketimes, trial_event+tmin)
         idx = (bidx > 0) & (bidx <= np.size(trial_event))
         raster = spiketimes[idx] - trial_event[bidx[idx]-1]
         ridx = (raster > tmin) & (raster < tmax)
