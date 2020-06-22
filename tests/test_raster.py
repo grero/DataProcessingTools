@@ -3,6 +3,7 @@ import numpy as np
 import tempfile
 import os
 import scipy.io as sio
+import matplotlib.pylab as plt
 
 
 def test_basic():
@@ -15,4 +16,10 @@ def test_basic():
     assert (raster.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
     assert np.isclose(raster.spiketimes, [0.0, 0.05, 0.2, 0.3, 0.4, 0.0, 0.1, 0.2, 0.3]).all()
 
-
+    # test plotting
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    raster.plot(ax=ax)
+    x, y = ax.lines[0].get_data()
+    assert np.isclose(raster.spiketimes, x).all()
+    assert np.isclose(raster.trialidx, y).all()
