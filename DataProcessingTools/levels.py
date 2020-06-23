@@ -65,7 +65,7 @@ def get_level_name(target_level, cwd=None):
     Return the name of the requested level
     """
     if cwd is None:
-        cwd = os.getwd()
+        cwd = os.getcwd()
 
     this_level = level(cwd)
     this_idx = levels.index(this_level)
