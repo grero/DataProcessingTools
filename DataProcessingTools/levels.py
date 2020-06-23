@@ -53,10 +53,10 @@ def get_level_dirs(target_level, cwd=None):
         rel_path = resolve_level(target_level, cwd)
         pattern = level_patterns_s[target_idx]
         gpattern = os.path.join(cwd, rel_path, "..", pattern)
-        dirs = glob.glob(gpattern)
+        dirs = sorted(glob.glob(gpattern))
     else:
         patterns = level_patterns_s[this_idx+1:target_idx+1]
-        dirs = glob.glob(os.path.join(cwd, *patterns))
+        dirs = sorted(glob.glob(os.path.join(cwd, *patterns)))
     return dirs
 
 
