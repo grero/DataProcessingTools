@@ -42,6 +42,14 @@ def test_working_memory():
         reward_on = trials.get_timestamps("reward_on")
         assert len(reward_on) == 395
 
+    testdir = "animal/20130923/session01"
+    with DPT.misc.CWD(os.path.join(os.path.dirname(__file__),testdir)):
+        trials = DPT.trialstructures.WorkingMemoryTrials()
+        trial_starts = trials.get_timestamps("trial_start")
+        assert len(trial_starts) == 50
+        assert trial_starts[0] == 0.003666666666667595
+
+
 def test_auto_discovery():
     testdir = "animal/20130923/session01/array01/channel001/cell01"
     with DPT.misc.CWD(os.path.join(os.path.dirname(__file__), testdir)):
