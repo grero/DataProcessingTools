@@ -23,8 +23,8 @@ def test_level():
         if not os.path.isdir(d):
             os.makedirs(d)
     dirs = DPT.levels.get_level_dirs("channel", "Pancake/20130923/session01/array02")
-    assert dirs[0] == "Pancake/20130923/session01/array02/channel034"
-    assert dirs[1] == "Pancake/20130923/session01/array02/channel033"
+    assert dirs[0] == "Pancake/20130923/session01/array02/channel033"
+    assert dirs[1] == "Pancake/20130923/session01/array02/channel034"
 
     dirs = DPT.levels.get_level_dirs("session", "Pancake/20130923/session01/array02")
     assert dirs[0] == "Pancake/20130923/session01/array02/./../../session01"
