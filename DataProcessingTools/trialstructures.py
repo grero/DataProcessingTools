@@ -47,7 +47,9 @@ class WorkingMemoryTrials(TrialStructure):
         self.load()
 
     def load(self):
-        with open(self.filename, "r") as csvfile:
+        sessiondir = get_level_name("session")
+        leveldir = resolve_level(self.level)
+        with open(os.path.join(leveldir, self.filename), "r") as csvfile:
             data = csv.DictReader(csvfile)
             for row in data:
                 word = row["words"]
@@ -71,9 +73,21 @@ class WorkingMemoryTrials(TrialStructure):
                 if event is not None:
                     self.events.append(event)
                     self.timestamps.append(np.float(row["timestamps"]))
-        
-        self.events = np.array(self.events)
-        self.timestamps = np.array(self.timestamps)
+        if sessiondir: 
+            # filter events to only those in the current session
+            sidx0 = self.events.index(sessiondir)
+            sid = int("".join([f for f in filter(str.isdigit, sessiondir)]))
+            sid += 1 
+            try:
+                ssid = "".join(("session", str(sid).zfill(2)))
+                sidx1 = self.events.index(ssid)
+            except:
+                sidx1 = len(self.events)
+            self.events = np.array(self.events[sidx0:sidx1])
+            self.timestamps = np.array(self.timestamps[sidx0:sidx1]) - self.timestamps[sidx0]
+        else:
+            self.events = np.array(self.events)
+            self.timestamps = np.array(self.timestamps)
 
     def get_timestamps(self, event_label):
         """
