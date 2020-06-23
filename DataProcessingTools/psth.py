@@ -7,12 +7,12 @@ from .raster import Raster
 
 class PSTH(DPObject):
     def __init__(self, bins, spiketimes=None, trialidx=None, triallabels=None,
-                 trial_events=None):
+                 alignto=None, trial_event=None):
         tmin = bins[0]
         tmax = bins[-1]
         if spiketimes is None:
             # attempt to load from the current directory
-            raster = Raster(tmin, tmax, trial_event=trial_events)
+            raster = Raster(tmin, tmax, alignto=alignto, trial_event=trial_event)
             spiketimes = raster.spiketimes
             trialidx = raster.trialidx
             triallabels = raster.trial_labels
