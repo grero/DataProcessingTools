@@ -2,25 +2,27 @@ from matplotlib.pyplot import gca
 import numpy as np
 from .objects import DPObject
 from .spiketrain import Spiketrain
+from .trialstructures import *
 import os
 
 
 class Raster(DPObject):
-    def __init__(self, tmin, tmax, trial_event=None,
+    def __init__(self, tmin, tmax, alignto=None, trial_event=None,
                  spiketimes=None,
                  trial_labels=None, dirs=None):
         if spiketimes is None:
             spiketrain = Spiketrain()
             spiketimes = spiketrain.timestamps.flatten()
-        if trial_event is None:
-            # TODO: Load trials here
-            pass
+        if alignto is None:
+            trials = get_trials()
+            # convert from seconds to ms
+            alignto = 1000*trials.get_timestamps(trial_event)
         if trial_labels is None:
-            trial_labels = np.arange(len(trial_event))
+            trial_labels = np.arange(len(alignto))
 
-        bidx = np.digitize(spiketimes, trial_event+tmin)
-        idx = (bidx > 0) & (bidx <= np.size(trial_event))
-        raster = spiketimes[idx] - trial_event[bidx[idx]-1]
+        bidx = np.digitize(spiketimes, alignto+tmin)
+        idx = (bidx > 0) & (bidx <= np.size(alignto))
+        raster = spiketimes[idx] - alignto[bidx[idx]-1]
         ridx = (raster > tmin) & (raster < tmax)
         self.spiketimes = raster[ridx]
         self.trialidx = bidx[idx][ridx]-1

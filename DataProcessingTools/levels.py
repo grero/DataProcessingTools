@@ -32,7 +32,7 @@ def resolve_level(target_level, cwd=None):
     this_idx = levels.index(this_level)
     target_idx = levels.index(target_level)
     pl = ["."]
-    for i in range(0, this_idx - target_idx+1):
+    for i in range(0, this_idx - target_idx):
         pl.append("..")
     return os.path.join(*pl)
 
@@ -47,14 +47,16 @@ def get_level_dirs(target_level, cwd=None):
     this_level = level(cwd)
     this_idx = levels.index(this_level)
     target_idx = levels.index(target_level)
-    if target_idx <= this_idx:
+    if target_idx == this_idx:
+        dirs = [os.path.join(cwd, ".")]
+    elif target_idx < this_idx:
         rel_path = resolve_level(target_level, cwd)
         pattern = level_patterns_s[target_idx]
-        gpattern = os.path.join(cwd, rel_path, pattern)
-        dirs = glob.glob(gpattern)
+        gpattern = os.path.join(cwd, rel_path, "..", pattern)
+        dirs = sorted(glob.glob(gpattern))
     else:
         patterns = level_patterns_s[this_idx+1:target_idx+1]
-        dirs = glob.glob(os.path.join(cwd, *patterns))
+        dirs = sorted(glob.glob(os.path.join(cwd, *patterns)))
     return dirs
 
 
@@ -63,7 +65,7 @@ def get_level_name(target_level, cwd=None):
     Return the name of the requested level
     """
     if cwd is None:
-        cwd = os.getwd()
+        cwd = os.getcwd()
 
     this_level = level(cwd)
     this_idx = levels.index(this_level)
