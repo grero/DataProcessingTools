@@ -1,5 +1,5 @@
 import numpy as np
-from matplotlib.pyplot import gcf
+from matplotlib.pyplot import gcf, gca
 from .objects import DPObject
 from . import levels
 from .raster import Raster
@@ -66,10 +66,9 @@ class PSTH(DPObject):
                                            axis=0)
         self.ntrials = self.ntrials + psth.ntrials
 
-    def plot(self, i=None, fig=None, overlay=False):
-        if fig is None:
-            fig = gcf()
-        ax = fig.add_subplot(111)
+    def plot(self, i=None, ax=None, overlay=False):
+        if ax is None:
+            ax = gca()
         if not overlay:
             ax.clear()
         trial_labels = self.trial_labels[i]
