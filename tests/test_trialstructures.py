@@ -51,6 +51,11 @@ def test_working_memory():
         assert location.count(2) == 431
         assert location.count(3) == 312
 
+        # only correct trials
+        reward_onset, ridx, _ = trials.get_timestamps("reward_on")
+        stim1_onset, identity, location = trials.get_stim(0, ridx)
+        assert len(stim1_onset) == 395
+
     testdir = "animal/20130923/session01"
     with DPT.misc.CWD(os.path.join(os.path.dirname(__file__),testdir)):
         trials = DPT.trialstructures.WorkingMemoryTrials()
