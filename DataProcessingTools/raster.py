@@ -34,6 +34,17 @@ class Raster(DPObject):
         else:
             self.dirs = dirs
 
+    def append(self, raster):
+        DPObject.append(self, raster)
+        n_old = len(self.spiketimes)
+        n_new = n_old + len(raster.spiketimes)
+        self.spiketimes.resize(n_new)
+        self.spiketimes[n_old:n_new] = raster.spiketimes
+        self.trialidx.resize(n_new)
+        self.trialidx[n_old:n_new] = raster.trialidx
+
+        self.trial_labels = np.concatenate((self.trial_labels, raster.trial_labels))
+
     def plot(self, idx=None, ax=None, overlay=False):
         if ax is None:
             ax = gca()
