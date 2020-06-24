@@ -122,12 +122,15 @@ class WorkingMemoryTrials(TrialStructure):
         
         return self.timestamps[idx], self.trialidx[idx], self.stimidx[idx]
 
-    def get_stim(self, stimidx=0):
+    def get_stim(self, stimidx=0, trialidx=None):
         """
         Return the timestamp, identity and location of the stimulus
         at `stimidx` of every trial.
         """
-        fidx = np.where(self.stimidx==stimidx)[0]
+        fidx = self.stimidx==stimidx
+        if trialidx is not None:
+            qidx = np.isin(self.trialidx, trialidx)
+            fidx = fidx & qidx
         p = re.compile("stimulus_on_([0-9]+)_([0-9]+)")
         location = []
         identity = []
