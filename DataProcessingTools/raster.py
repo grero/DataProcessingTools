@@ -28,7 +28,7 @@ class Raster(DPObject):
         self.spiketimes = raster[ridx]
         self.trialidx = bidx[idx][ridx]-1
         self.trial_labels = trial_labels
-        self.setidx = [0 for i in range(len(trial_labels))]
+        self.setidx = [0 for i in range(len(self.trialidx))]
         if dirs is None:
             self.dirs = [os.getcwd()]
         else:
