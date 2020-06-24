@@ -1,5 +1,5 @@
 import numpy as np
-from matplotlib.pyplot import gcf
+from matplotlib.pyplot import gcf, gca
 from .objects import DPObject
 from . import levels
 from .raster import Raster
@@ -7,7 +7,7 @@ import os
 
 
 class PSTH(DPObject):
-    def __init__(self, bins, spiketimes=None, trialidx=None, triallabels=None,
+    def __init__(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
                  alignto=None, trial_event=None, dirs=None):
         DPObject.__init__(self)
         tmin = bins[0]
@@ -24,8 +24,20 @@ class PSTH(DPObject):
             jj = np.searchsorted(bins, spiketimes[i])
             if 0 <= jj < np.size(bins):
                 counts[trialidx[i], jj] += 1
-        self.data = counts
-        self.bins = bins
+
+        self.windowsize = windowsize
+        if windowsize > 1:
+            scounts = np.zeros((ntrials, len(bins)-windowsize))
+            for i in range(ntrials):
+                for j in range(len(bins)-windowsize):
+                    scounts[i, j] = counts[i, j:j+windowsize].sum()
+
+            self.data = scounts
+            self.bins = bins[:-windowsize]
+        else:
+            self.data = counts
+            self.bins = bins
+
         self.ntrials = ntrials
         if triallabels is None:
             self.trial_labels = np.ones((ntrials,))
@@ -54,22 +66,19 @@ class PSTH(DPObject):
                                            axis=0)
         self.ntrials = self.ntrials + psth.ntrials
 
-    def plot(self, i=None, fig=None, overlay=False):
-        if fig is None:
-            fig = gcf()
-        ax = fig.add_subplot(111)
+    def plot(self, i=None, ax=None, overlay=False):
+        if ax is None:
+            ax = gca()
         if not overlay:
             ax.clear()
-        labels = np.unique(self.trial_labels)
-        if i is not None:
-            # plot a particular label
-            labels = labels[i:i+1]
+        trial_labels = self.trial_labels[i]
+        data = self.data[i, :]
+        labels = np.unique(trial_labels)
 
         for li in range(len(labels)):
             label = labels[li]
-            idx = self.trial_labels == label
-            mu = self.data[idx, :].mean(0)
-            sigma = self.data[idx, :].std(0)
+            idx = trial_labels == label
+            mu = data[idx, :].mean(0)
+            sigma = data[idx, :].std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
-        return fig

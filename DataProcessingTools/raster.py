@@ -28,11 +28,22 @@ class Raster(DPObject):
         self.spiketimes = raster[ridx]
         self.trialidx = bidx[idx][ridx]-1
         self.trial_labels = trial_labels
-        self.setidx = [0 for i in range(len(trial_labels))]
+        self.setidx = [0 for i in range(len(self.trialidx))]
         if dirs is None:
             self.dirs = [os.getcwd()]
         else:
             self.dirs = dirs
+
+    def append(self, raster):
+        DPObject.append(self, raster)
+        n_old = len(self.spiketimes)
+        n_new = n_old + len(raster.spiketimes)
+        self.spiketimes.resize(n_new)
+        self.spiketimes[n_old:n_new] = raster.spiketimes
+        self.trialidx.resize(n_new)
+        self.trialidx[n_old:n_new] = raster.trialidx
+
+        self.trial_labels = np.concatenate((self.trial_labels, raster.trial_labels))
 
     def plot(self, idx=None, ax=None, overlay=False):
         if ax is None:
