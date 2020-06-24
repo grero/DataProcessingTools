@@ -60,16 +60,14 @@ class PSTH(DPObject):
         ax = fig.add_subplot(111)
         if not overlay:
             ax.clear()
-        labels = np.unique(self.trial_labels)
-        if i is not None:
-            # plot a particular label
-            labels = labels[i:i+1]
+        trial_labels = self.trial_labels[i]
+        data = self.data[i, :]
+        labels = np.unique(trial_labels)
 
         for li in range(len(labels)):
             label = labels[li]
-            idx = self.trial_labels == label
-            mu = self.data[idx, :].mean(0)
-            sigma = self.data[idx, :].std(0)
+            idx = trial_labels == label
+            mu = data[idx, :].mean(0)
+            sigma = data[idx, :].std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
-        return fig
