@@ -3,11 +3,13 @@ from matplotlib.pyplot import gcf
 from .objects import DPObject
 from . import levels
 from .raster import Raster
+import os
 
 
 class PSTH(DPObject):
     def __init__(self, bins, spiketimes=None, trialidx=None, triallabels=None,
-                 alignto=None, trial_event=None):
+                 alignto=None, trial_event=None, dirs=None):
+        DPObject.__init__(self)
         tmin = bins[0]
         tmax = bins[-1]
         if spiketimes is None:
@@ -37,6 +39,10 @@ class PSTH(DPObject):
 
         # index to keep track of sets, e.g. trials
         self.setidx = [0 for i in range(self.ntrials)]
+        if dirs is not None:
+            self.dirs = dirs
+        else:
+            self.dirs = [os.getcwd()]
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():
