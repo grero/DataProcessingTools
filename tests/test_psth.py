@@ -7,8 +7,8 @@ def test_psth():
     trialidx = np.random.random_integers(0, 100, (100000, ))
     trial_labels = np.random.random_integers(1, 9, (101, ))
     bins = np.arange(0, 100.0, 2.0)
-    psth = DPT.psth.PSTH(bins, spiketimes, trialidx, trial_labels)
-    psth.dirs = ["Pancake/20130923/session01/array01/channel001/cell01"]
+    psth = DPT.psth.PSTH(bins, spiketimes, trialidx, trial_labels,
+                        dirs=["Pancake/20130923/session01/array01/channel001/cell01"])
 
     assert psth.data.shape[0] == 101
 
@@ -24,8 +24,8 @@ def test_psth():
     spiketimes = np.cumsum(np.random.exponential(0.3, 100000))
     trialidx = np.random.random_integers(0, 100, (100000, ))
 
-    psth2 = DPT.psth.PSTH(bins, spiketimes, trialidx, trial_labels)
-    psth2.dirs = ["Pancake/20130923/session01/array01/channel002/cell01"]
+    psth2 = DPT.psth.PSTH(bins, spiketimes, trialidx, trial_labels,
+                         dirs= ["Pancake/20130923/session01/array01/channel002/cell01"])
     ppsth = DPT.objects.DPObjects([psth])
     ppsth.append(psth2)
     assert ppsth[0] == psth
