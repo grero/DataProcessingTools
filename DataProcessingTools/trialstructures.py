@@ -49,6 +49,10 @@ class WorkingMemoryTrials(TrialStructure):
     def load(self):
         sessiondir = get_level_name("session")
         leveldir = resolve_level(self.level)
+        tidx = -1
+        stidx = -1
+        self.trialidx = []
+        self.stimidx = []
         with open(os.path.join(leveldir, self.filename), "r") as csvfile:
             data = csv.DictReader(csvfile)
             for row in data:
@@ -63,6 +67,7 @@ class WorkingMemoryTrials(TrialStructure):
                         stimid = 2
                     if word[2] == "1":
                         switch = "on"
+                        stidx += 1
                     else:
                         switch = "off"
                     locidx = int(word[3:], 2)
@@ -73,6 +78,12 @@ class WorkingMemoryTrials(TrialStructure):
                 if event is not None:
                     self.events.append(event)
                     self.timestamps.append(np.float(row["timestamps"]))
+                    if event == "trial_start":
+                        tidx += 1
+                        stidx = -1
+                    self.trialidx.append(tidx)
+                    self.stimidx.append(stidx)
+
         if sessiondir: 
             # filter events to only those in the current session
             sidx0 = self.events.index(sessiondir)
@@ -85,9 +96,13 @@ class WorkingMemoryTrials(TrialStructure):
                 sidx1 = len(self.events)
             self.events = np.array(self.events[sidx0:sidx1])
             self.timestamps = np.array(self.timestamps[sidx0:sidx1]) - self.timestamps[sidx0]
+            self.trialidx = np.array(self.trialidx[sidx0:sidx1]) - self.trialidx[sidx0]
+            self.stimidx = np.array(self.stimidx[sidx0:sidx1])
         else:
             self.events = np.array(self.events)
             self.timestamps = np.array(self.timestamps)
+            self.trialidx = np.array(self.trialidx)
+            self.stimidx = np.array(self.stimidx)
 
     def get_timestamps(self, event_label):
         """
@@ -105,7 +120,26 @@ class WorkingMemoryTrials(TrialStructure):
             if m is not None: 
                 idx[i] = True
         
-        return self.timestamps[idx]
+        return self.timestamps[idx], self.trialidx[idx], self.stimidx[idx]
+
+    def get_stim(self, stimidx=0):
+        """
+        Return the timestamp, identity and location of the stimulus
+        at `stimidx` of every trial.
+        """
+        fidx = np.where(self.stimidx==stimidx)[0]
+        p = re.compile("stimulus_on_([0-9]+)_([0-9]+)")
+        location = []
+        identity = []
+        timestamps = []
+        for (ss,tt) in zip(self.events[fidx], self.timestamps[fidx]):
+            m = p.match(ss)
+            if m is not None:
+                g = m.groups()
+                identity.append(int(g[0]))
+                location.append(int(g[1]))
+                timestamps.append(tt)
+        return timestamps, identity, location
 
 def get_trials():
     """
