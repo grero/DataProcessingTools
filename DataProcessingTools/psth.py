@@ -7,7 +7,7 @@ import os
 
 
 class PSTH(DPObject):
-    def __init__(self, bins, spiketimes=None, trialidx=None, triallabels=None,
+    def __init__(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
                  alignto=None, trial_event=None, dirs=None):
         DPObject.__init__(self)
         tmin = bins[0]
@@ -24,8 +24,20 @@ class PSTH(DPObject):
             jj = np.searchsorted(bins, spiketimes[i])
             if 0 <= jj < np.size(bins):
                 counts[trialidx[i], jj] += 1
-        self.data = counts
-        self.bins = bins
+
+        self.windowsize = windowsize
+        if windowsize > 1:
+            scounts = np.zeros((ntrials, len(bins)-windowsize))
+            for i in range(ntrials):
+                for j in range(len(bins)-windowsize):
+                    scounts[i, j] = counts[i, j:j+windowsize].sum()
+
+            self.data = scounts
+            self.bins = bins[:-windowsize]
+        else:
+            self.data = counts
+            self.bins = bins
+
         self.ntrials = ntrials
         if triallabels is None:
             self.trial_labels = np.ones((ntrials,))
