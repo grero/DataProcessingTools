@@ -10,6 +10,7 @@ class Raster(DPObject):
     def __init__(self, tmin, tmax, alignto=None, trial_event=None,
                  spiketimes=None,
                  trial_labels=None, dirs=None):
+        DPObject.__init__(self)
         if spiketimes is None:
             spiketrain = Spiketrain()
             spiketimes = spiketrain.timestamps.flatten()
