@@ -48,6 +48,8 @@ class PSTH(DPObject):
             for t, l in zip(trialidx, triallabels):
                 dd[t] = l
             self.trial_labels = np.array([dd[t] for t in range(ntrials)])
+        else:
+            self.trial_labels = triallabels
 
         # index to keep track of sets, e.g. trials
         self.setidx = [0 for i in range(self.ntrials)]
