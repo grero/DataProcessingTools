@@ -7,8 +7,12 @@ class DPObject():
         self.data = np.ndarray((0, 0))
         self.dirs = []
         self.setidx = []
+        self.plotopts = {}
 
     def plot(self, i, fig):
+        pass
+
+    def update_plotopts(self, ax):
         pass
 
     def __add__(self, obj):
