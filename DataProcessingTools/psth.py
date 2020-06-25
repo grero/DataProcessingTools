@@ -59,6 +59,7 @@ class PSTH(DPObject):
             self.dirs = [os.getcwd()]
         
         self.plotopts = {"group_by_label": True}
+        self.current_idx = None
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():
@@ -70,7 +71,16 @@ class PSTH(DPObject):
                                            axis=0)
         self.ntrials = self.ntrials + psth.ntrials
 
+    def update_plotopts(self, plotopts, ax=None):
+        if ax is None:
+            ax = gca()
+        if plotopts["group_by_label"] != self.plotopts["group_by_label"]:
+            # re-plot
+            self.plotopts["group_by_label"] = plotopts["group_by_label"]
+            self.plot(self.current_idx, ax)
+
     def plot(self, i=None, ax=None, overlay=False):
+        self.current_idx = i
         if ax is None:
             ax = gca()
         if not overlay:
