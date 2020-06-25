@@ -57,6 +57,8 @@ class PSTH(DPObject):
             self.dirs = dirs
         else:
             self.dirs = [os.getcwd()]
+        
+        self.plotopts = {"group_by_label": True}
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():
@@ -76,11 +78,18 @@ class PSTH(DPObject):
         trial_labels = self.trial_labels[i]
         data = self.data[i, :]
         labels = np.unique(trial_labels)
-
-        for li in range(len(labels)):
-            label = labels[li]
-            idx = trial_labels == label
-            mu = data[idx, :].mean(0)
-            sigma = data[idx, :].std(0)
+        if self.plotopts["group_by_label"]:
+            for li in range(len(labels)):
+                label = labels[li]
+                idx = trial_labels == label
+                mu = data[idx, :].mean(0)
+                sigma = data[idx, :].std(0)
+                ax.plot(self.bins, mu)
+                ax.fill_between(self.bins, mu-sigma, mu+sigma)
+        else:
+            # collapse across labels
+            mu = data.mean(0)
+            sigma = data.std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
+
