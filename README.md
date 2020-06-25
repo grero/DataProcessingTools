@@ -68,3 +68,52 @@ session1_data = psth1.data[session_idx(0),:]
 # For this example, since we only have a single session, we would be looking
 # at all the data.
 ```
+### A complete example
+Here is an example of how to compute raster and psth for a list for a list of
+cells and step through plots of both using PanGUI
+
+```python
+import DataProcessingTools as DPT
+import numpy as np
+import os
+import PanGUI
+
+# change this to wherever you keep the data hierarchy
+datadir = os.path.expanduser("~/Documents/workingMemory")
+
+# get the trials for one session
+with DPT.misc.CWD(os.path.join(datadir, "Whiskey/20200106/session02")):
+    trials = DPT.trialstructures.WorkingMemoryTrials()
+
+# get response trials
+response_cue, ridx, _ = trials.get_timestamps("response_on")
+
+# get error trials
+failure, eidx, _ = trials.get_timestamps("failure")
+
+#error trials with response cue
+reidx = np.intersect1d(ridx, eidx)
+
+# get stimulus onset of the error trials
+stim_onset, identity, location = trials.get_stim(0, reidx)
+
+#convert from seconds to ms
+stim_onset = 1000*np.array(stim_onset)
+
+# get all the cells for one session
+with DPT.misc.CWD(os.path.join(datadir, "Whiskey/20200106/session02")):
+    cells = DPT.levels.get_level_dirs("cell")
+
+# gather rasters and PSTH for these cells, for the error trials
+bins = np.arange(-300, 1000.0, 10)
+with DPT.misc.CWD(cells[0]):
+        raster = DPT.raster.Raster(-300.0, 1000.0, stim_onset)
+        psth = DPT.psth.PSTH(bins, 10, raster.spiketimes, raster.trialidx, location)
+for cell in cells[1:]:
+    with DPT.misc.CWD(cell):
+        praster = DPT.raster.Raster(-300.0, 1000.0, stim_onset)
+        raster.append(praster)
+        psth.append(DPT.psth.PSTH(bins, 10, praster.spiketimes, praster.trialidx, location))
+
+app = PanGUI.create_window([raster, psth], cols=1, indexer="cell")
+```
