@@ -33,6 +33,7 @@ class Raster(DPObject):
             self.dirs = [os.getcwd()]
         else:
             self.dirs = dirs
+        self.plotopts = {}
 
     def append(self, raster):
         DPObject.append(self, raster)
