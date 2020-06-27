@@ -4,13 +4,38 @@ from .objects import DPObject
 from . import levels
 from .raster import Raster
 import os
+import glob
+import h5py
+import hashlib
 
 
 class PSTH(DPObject):
+    filename = "psth.mat"
+
     def __init__(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
-                 alignto=None, trial_event=None, dirs=None):
+                 alignto=None, trial_event=None, dirs=None, redolevel=0, savelevel=1):
         DPObject.__init__(self)
-        self.args = {"bins": bins, "windowsize": windowsize, "alignto": alignto}
+        self.args = {"bins": bins, "windowsize": windowsize,
+                     "alignto": alignto}
+        fname = self.get_filename()
+        if redolevel == 0 and os.path.isfile(fname):
+            self.load(fname)
+        else:
+            # create object
+            self.create(bins, windowsize, spiketimes, trialidx, triallabels,
+                        alignto, trial_event, dirs, savelevel)
+
+    def get_filename(self):
+        """
+        Return the base filename with an argument hash
+        appended
+        """
+        h = self.hash()
+        fname = self.filename.replace(".mat", "_{0}.mat".format(h))
+        return fname
+
+    def create(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
+                      alignto=None, trial_event=None, dirs=None, savelevel=1):
         tmin = bins[0]
         tmax = bins[-1]
         if spiketimes is None:
@@ -58,6 +83,48 @@ class PSTH(DPObject):
             self.dirs = dirs
         else:
             self.dirs = [os.getcwd()]
+        
+        if savelevel > 0:
+            self.save()
+
+    def load(self, fname=None):
+        if fname is None:
+            fname = self.filename
+        with h5py.File(fname) as ff:
+            args = {}
+            for (k,v) in ff["args"].items():
+                self.args[k] = v
+            self.data = ff["counts"][:]
+            self.ntrials = self.data.shape[0]
+            self.bins = self.args["bins"][:self.data.shape[-1]]
+            self.trial_labels = ff["trial_labels"][:]
+            self.dirs = [s.decode() for s in ff["dirs"][:]]
+            self.setidx = ff["setidx"][:].tolist()
+
+    def hash(self):
+        """
+        Returns a hash representation of this object's arguments.
+        """
+        h = hashlib.sha1()
+        for (k, v) in self.args.items():
+            x = np.atleast_1d(v)
+            h.update(x.tobytes())
+        h.hexdigest()
+
+    def save(self, fname=None):
+        if fname is None:
+            fname = self.get_filename()
+
+        with h5py.File(fname, "w") as ff:
+            args = ff.create_group("args")
+            args["bins"] = self.args["bins"]
+            args["windowsize"] = self.args["windowsize"]
+            if self.args["alignto"] is not None:
+                args["alignto"] = self.args["alignto"]
+            ff["counts"] = self.data
+            ff["trial_labels"] = self.trial_labels
+            ff["dirs"] = np.array(self.dirs, dtype='S256')
+            ff["setidx"] = self.setidx
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():
