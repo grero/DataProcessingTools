@@ -1,6 +1,7 @@
 import numpy as np
 import DataProcessingTools as DPT
 import matplotlib.pylab as plt
+import os
 
 
 def test_psth():
@@ -9,7 +10,10 @@ def test_psth():
     trial_labels = np.random.random_integers(1, 9, (101, ))
     bins = np.arange(0, 100.0, 2.0)
     psth = DPT.psth.PSTH(bins, 1, spiketimes, trialidx, trial_labels,
-                        dirs=["Pancake/20130923/session01/array01/channel001/cell01"])
+                         dirs=["Pancake/20130923/session01/array01/channel001/cell01"],
+                         redolevel=1)
+    # check that something got saved
+    assert os.path.isfile(psth.get_filename())
 
     assert psth.data.shape[0] == 101
 
@@ -27,7 +31,8 @@ def test_psth():
     trialidx = np.random.random_integers(0, 100, (100000, ))
 
     psth2 = DPT.psth.PSTH(bins, 1, spiketimes, trialidx, trial_labels,
-                         dirs= ["Pancake/20130923/session01/array01/channel002/cell01"])
+                          dirs=["Pancake/20130923/session01/array01/channel002/cell01"],
+                          redolevel=1)
     ppsth = DPT.objects.DPObjects([psth])
     ppsth.append(psth2)
     assert ppsth[0] == psth
@@ -63,6 +68,7 @@ def test_sliding_psth():
     trial_labels = np.random.random_integers(1, 9, (101, ))
     bins = np.arange(0, 100.0, 2.0)
     psth = DPT.psth.PSTH(bins, 10, spiketimes, trialidx, trial_labels,
-                        dirs=["Pancake/20130923/session01/array01/channel001/cell01"])
-    assert psth.data.shape == (101, len(bins) - 10)
+                        dirs=["Pancake/20130923/session01/array01/channel001/cell01"],
+                        redolevel=1)
     assert psth.bins.shape == (len(bins) - 10, )
+    assert psth.data.shape == (101, len(bins) - 10)
