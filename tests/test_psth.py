@@ -33,20 +33,6 @@ def test_psth():
 
     psth2 = DPT.psth.PSTH(bins, 1, spiketimes, trialidx, trial_labels,
                          dirs= ["Pancake/20130923/session01/array01/channel002/cell01"])
-    ppsth = DPT.objects.DPObjects([psth])
-    ppsth.append(psth2)
-    assert ppsth[0] == psth
-    assert ppsth[1] == psth2
-
-    ppsth.plot(0)
-    fig = plt.gcf()
-    assert len(fig.axes[0].lines) == 9
-    ppsth.plot(1, ax=fig.axes[0])
-    assert len(fig.axes[0].lines) == 9
-
-    ppsth.plot(0, ax=fig.axes[0], overlay=True)
-    assert len(fig.axes[0].lines) == 18
-
     # test appending objects
     psth.append(psth2)
 
