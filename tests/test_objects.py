@@ -2,7 +2,7 @@ import DataProcessingTools as DPT
 
 
 def test_level_idx():
-    obj = DPT.objects.DPObject()
+    obj = DPT.DPObject()
     obj.dirs = ["session01/array01/channel01/cell01",
                 "session01/array01/channel01/cell02"]
     obj.setidx = [0, 0, 0, 1, 1, 1]
