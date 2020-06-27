@@ -23,6 +23,11 @@ def test_psth():
     fig = plt.gcf()
     assert len(fig.axes[0].lines) == 9
 
+    # test update plotopts
+    plotopts = {"group_by_label": False}
+    psth.update_plotopts(plotopts,ax=fig.axes[0])
+    assert len(fig.axes[0].lines) == 1
+
     spiketimes = np.cumsum(np.random.exponential(0.3, 100000))
     trialidx = np.random.random_integers(0, 100, (100000, ))
 
