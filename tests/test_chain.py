@@ -21,10 +21,11 @@ def test_load():
             raster = DPT.raster.Raster(-0.1, 0.5, trial_events)
             assert (raster.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
             assert np.isclose(raster.spiketimes, [0.0, 0.05, 0.2, 0.3, 0.4, 0.0, 0.1, 0.2, 0.3]).all()
-            psth = DPT.psth.PSTH([-0.1, 0.2, 0.4, 0.6], alignto=trial_events)
+            psth = DPT.psth.PSTH([-0.1, 0.2, 0.4, 0.6], alignto=trial_events,redolevel=1)
             assert psth.data.shape == (2, 4)
             assert (psth.data[0, :] == [0, 3, 2, 1]).all()
             assert (psth.data[1, :] == [0, 3, 1, 0]).all()
+            os.remove(psth.get_filename())
 
         os.remove(os.path.join(pth, "unit.mat"))
         os.rmdir("Pancake/20130923/session01/array01/channel001/cell01")
