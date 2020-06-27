@@ -10,6 +10,7 @@ class PSTH(DPObject):
     def __init__(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
                  alignto=None, trial_event=None, dirs=None):
         DPObject.__init__(self)
+        self.args = {"bins": bins, "windowsize": windowsize, "alignto": alignto}
         tmin = bins[0]
         tmax = bins[-1]
         if spiketimes is None:
