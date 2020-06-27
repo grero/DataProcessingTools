@@ -80,6 +80,9 @@ class PSTH(DPObject):
             self.plot(self.current_idx, ax)
 
     def plot(self, i=None, ax=None, overlay=False):
+        if i is None:
+            i = range(len(self.trial_labels))
+
         self.current_idx = i
         if ax is None:
             ax = gca()
