@@ -74,7 +74,8 @@ class PSTH(DPObject):
     def update_plotopts(self, plotopts, ax=None):
         if ax is None:
             ax = gca()
-        if plotopts["group_by_label"] != self.plotopts["group_by_label"]:
+        group_by_label = plotopts.get("group_by_label", self.plotopts["group_by_label"])
+        if group_by_label != self.plotopts["group_by_label"]:
             # re-plot
             self.plotopts["group_by_label"] = plotopts["group_by_label"]
             self.plot(self.current_idx, ax)
