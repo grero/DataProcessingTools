@@ -3,10 +3,9 @@ from . import levels
 
 
 class DPObject():
-    def __init__(self, *args, **kwargs):
-        self.data = np.ndarray((0, 0))
-        self.dirs = []
-        self.setidx = []
+    def __init__(self, dirs=[], setidx=[], *args, **kwargs):
+        self.dirs = dirs
+        self.setidx = setidx
 
     def plot(self, i, fig):
         pass
