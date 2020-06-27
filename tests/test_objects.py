@@ -2,10 +2,9 @@ import DataProcessingTools as DPT
 
 
 def test_level_idx():
-    obj = DPT.DPObject()
-    obj.dirs = ["session01/array01/channel01/cell01",
-                "session01/array01/channel01/cell02"]
-    obj.setidx = [0, 0, 0, 1, 1, 1]
+    obj = DPT.DPObject(dirs=["session01/array01/channel01/cell01",
+                             "session01/array01/channel01/cell02"],
+                       setidx=[0, 0, 0, 1, 1, 1])
 
     # test cell level
     idx = obj.getindex("cell")
@@ -18,15 +17,13 @@ def test_level_idx():
 
 
 def test_append():
-    obj1 = DPT.objects.DPObject()
-    obj1.dirs = ["session01/array01/channel001/cell01",
-                 "session01/array01/channel001/cell02"]
-    obj1.setidx = [0, 0, 0, 1, 1, 1]
+    obj1 = DPT.objects.DPObject(dirs=["session01/array01/channel001/cell01",
+                                      "session01/array01/channel001/cell02"],
+                                setidx=[0, 0, 0, 1, 1, 1])
 
-    obj2 = DPT.objects.DPObject()
-    obj2.dirs = ["session01/array02/channel033/cell01",
-                 "session01/array02/channel034/cell01"]
-    obj2.setidx = [0, 0, 0, 1, 1, 1]
+    obj2 = DPT.objects.DPObject(dirs=["session01/array02/channel033/cell01",
+                                      "session01/array02/channel034/cell01"],
+                                setidx=[0, 0, 0, 1, 1, 1])
 
     obj1.append(obj2)
 
