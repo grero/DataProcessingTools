@@ -25,14 +25,6 @@ class PSTH(DPObject):
             self.create(bins, windowsize, spiketimes, trialidx, triallabels,
                         alignto, trial_event, dirs, savelevel)
 
-    def get_filename(self):
-        """
-        Return the base filename with an argument hash
-        appended
-        """
-        h = self.hash()
-        fname = self.filename.replace(".mat", "_{0}.mat".format(h))
-        return fname
 
     def create(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
                       alignto=None, trial_event=None, dirs=None, savelevel=1):
@@ -88,6 +80,7 @@ class PSTH(DPObject):
             self.save()
 
     def load(self, fname=None):
+        DPObject.load(self)
         if fname is None:
             fname = self.filename
         with h5py.File(fname) as ff:
@@ -98,8 +91,6 @@ class PSTH(DPObject):
             self.ntrials = self.data.shape[0]
             self.bins = self.args["bins"][:self.data.shape[-1]]
             self.trial_labels = ff["trial_labels"][:]
-            self.dirs = [s.decode() for s in ff["dirs"][:]]
-            self.setidx = ff["setidx"][:].tolist()
 
     def hash(self):
         """

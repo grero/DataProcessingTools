@@ -1,5 +1,6 @@
 import numpy as np
 from . import levels
+import h5py
 
 
 class DPObject():
@@ -62,6 +63,25 @@ class DPObject():
         for d in obj.dirs:
             self.dirs.append(d)
 
+    def get_filename(self):
+        """
+        Return the base filename with an argument hash
+        appended
+        """
+        h = self.hash()
+        fname = self.filename.replace(".mat", "_{0}.mat".format(h))
+        return fname
+
+    def hash(self):
+        pass
+
+    def loads(self, fname=None):
+        if fname is None:
+            fname = self.get_filename()
+
+        with h5py.File(fname) as ff:
+            self.dirs = [s.decode() for s in ff["dirs"][:]]
+            self.setidx = ff["setidx"][:].tolist()
 
 class DPObjects():
     def __init__(self, objects):
