@@ -77,11 +77,12 @@ class PSTH(DPObject):
         """
         Returns a hash representation of this object's arguments.
         """
-        h = hashlib.sha1()
+        #TODO: This is not replicable across sessions
+        h = hashlib.sha1(b"psth")
         for (k, v) in self.args.items():
             x = np.atleast_1d(v)
             h.update(x.tobytes())
-        h.hexdigest()
+        return h.hexdigest()
 
     def save(self, fname=None):
         if fname is None:
