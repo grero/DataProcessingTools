@@ -10,32 +10,28 @@ import hashlib
 
 
 class PSTH(DPObject):
+    """
+    PSTH(bins,windowSize=1, dirs=None, redoLevel=0, saveLevel=1)
+    """
     filename = "psth.mat"
+    argsList = ["bins", ("windowSize", 1)]
 
-    def __init__(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
-                 alignto=None, trial_event=None, dirs=None, redolevel=0, savelevel=1):
-        DPObject.__init__(self)
-        self.args = {"bins": bins, "windowsize": windowsize,
-                     "alignto": alignto}
-        fname = self.get_filename()
-        if redolevel == 0 and os.path.isfile(fname):
-            self.load(fname)
-        else:
-            # create object
-            self.create(bins, windowsize, spiketimes, trialidx, triallabels,
-                        alignto, trial_event, dirs, savelevel)
+    def __init__(self, *args, **kwargs):
+        """
+        Return a PSTH object using the specified bins
+        """
+        DPObject.__init__(self, *args, **kwargs)
 
+    def create(self, *args, **kwargs):
+        saveLevel = kwargs.get("saveLevel", 1)
+        bins = self.args["bins"]
 
-    def create(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
-                      alignto=None, trial_event=None, dirs=None, savelevel=1):
-        tmin = bins[0]
-        tmax = bins[-1]
-        if spiketimes is None:
-            # attempt to load from the current directory
-            raster = Raster(tmin, tmax, alignto=alignto, trial_event=trial_event)
-            spiketimes = raster.spiketimes
-            trialidx = raster.trialidx
-            triallabels = raster.trial_labels
+        # attempt to load from the current directory
+        raster = Raster(bins[0], bins[-1], **kwargs)
+        spiketimes = raster.spiketimes
+        trialidx = raster.trialidx
+        self.trialLabels = raster.trialLabels
+
         ntrials = trialidx.max()+1
         counts = np.zeros((ntrials, np.size(bins)), dtype=np.int)
         for i in range(np.size(spiketimes)):
@@ -43,40 +39,25 @@ class PSTH(DPObject):
             if 0 <= jj < np.size(bins):
                 counts[trialidx[i], jj] += 1
 
-        self.windowsize = windowsize
-        if windowsize > 1:
-            scounts = np.zeros((ntrials, len(bins)-windowsize))
+        windowSize = self.args["windowSize"]
+        if windowSize > 1:
+            scounts = np.zeros((ntrials, len(bins)-windowSize))
             for i in range(ntrials):
-                for j in range(len(bins)-windowsize):
-                    scounts[i, j] = counts[i, j:j+windowsize].sum()
+                for j in range(len(bins)-windowSize):
+                    scounts[i, j] = counts[i, j:j+windowSize].sum()
 
             self.data = scounts
-            self.bins = bins[:-windowsize]
+            self.bins = bins[:-windowSize]
         else:
             self.data = counts
             self.bins = bins
 
         self.ntrials = ntrials
-        if triallabels is None:
-            self.trial_labels = np.ones((ntrials,))
-        elif np.size(triallabels) == ntrials:
-            self.trial_labels = triallabels
-        elif np.size(triallabels) == np.size(spiketimes):
-            dd = {}
-            for t, l in zip(trialidx, triallabels):
-                dd[t] = l
-            self.trial_labels = np.array([dd[t] for t in range(ntrials)])
-        else:
-            self.trial_labels = triallabels
 
         # index to keep track of sets, e.g. trials
         self.setidx = [0 for i in range(self.ntrials)]
-        if dirs is not None:
-            self.dirs = dirs
-        else:
-            self.dirs = [os.getcwd()]
         
-        if savelevel > 0:
+        if saveLevel > 0:
             self.save()
 
     def load(self, fname=None):
@@ -109,11 +90,9 @@ class PSTH(DPObject):
         with h5py.File(fname, "w") as ff:
             args = ff.create_group("args")
             args["bins"] = self.args["bins"]
-            args["windowsize"] = self.args["windowsize"]
-            if self.args["alignto"] is not None:
-                args["alignto"] = self.args["alignto"]
+            args["windowSize"] = self.args["windowSize"]
             ff["counts"] = self.data
-            ff["trial_labels"] = self.trial_labels
+            ff["trialLabels"] = self.trialLabels
             ff["dirs"] = np.array(self.dirs, dtype='S256')
             ff["setidx"] = self.setidx
 
