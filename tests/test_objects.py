@@ -48,3 +48,16 @@ def test_append():
 
     idx = obj1.getindex(None)
     assert idx(0) is None
+
+
+def test_object():
+
+    class MyObj(DPT.objects.DPObject):
+        argsList = ["tmin", "tmax"]
+        filename = "test.mat"
+
+    obj = MyObj(-0.1, 1.0)
+
+    assert obj.args["tmin"] == -0.1
+    assert obj.args["tmax"] == 1.0
+    
