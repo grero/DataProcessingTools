@@ -40,6 +40,7 @@ class DPObject():
     def create(self, *args, **kwargs):
         pass
 
+
     def plot(self, i, fig):
         pass
 
