@@ -57,7 +57,7 @@ class Raster(DPObject):
         self.trialidx.resize(n_new)
         self.trialidx[n_old:n_new] = raster.trialidx
 
-        self.trial_labels = np.concatenate((self.trial_labels, raster.trial_labels))
+        self.trialLabels = np.concatenate((self.trialLabels, raster.trialLabels))
 
     def plot(self, idx=None, ax=None, overlay=False):
         if ax is None:
