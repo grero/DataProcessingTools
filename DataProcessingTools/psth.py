@@ -71,7 +71,7 @@ class PSTH(DPObject):
             self.data = ff["counts"][:]
             self.ntrials = self.data.shape[0]
             self.bins = self.args["bins"][:self.data.shape[-1]]
-            self.trial_labels = ff["trial_labels"][:]
+            self.trialLabels = ff["trialLabels"][:]
 
     def hash(self):
         """
@@ -103,7 +103,7 @@ class PSTH(DPObject):
 
         DPObject.append(self, psth)
         self.data = np.concatenate((self.data, psth.data), axis=0)
-        self.trial_labels = np.concatenate((self.trial_labels, psth.trial_labels),
+        self.trialLabels = np.concatenate((self.trialLabels, psth.trialLabels),
                                            axis=0)
         self.ntrials = self.ntrials + psth.ntrials
 
@@ -112,13 +112,13 @@ class PSTH(DPObject):
             ax = gca()
         if not overlay:
             ax.clear()
-        trial_labels = self.trial_labels[i]
+        trialLabels = self.trialLabels[i]
         data = self.data[i, :]
-        labels = np.unique(trial_labels)
+        labels = np.unique(trialLabels)
 
         for li in range(len(labels)):
             label = labels[li]
-            idx = trial_labels == label
+            idx = trialLabels == label
             mu = data[idx, :].mean(0)
             sigma = data[idx, :].std(0)
             ax.plot(self.bins, mu)
