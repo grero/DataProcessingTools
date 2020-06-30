@@ -5,6 +5,7 @@ import os
 import numpy as np
 import scipy.io as sio
 import csv
+import matplotlib.pylab as plt
 
 
 def test_load():
@@ -82,11 +83,14 @@ def test_load():
         raster.append(raster2)
         cellidx = raster.getindex("cell")
         assert len(cellidx(1)) == len(raster2.setidx)
-
+        raster.plot(cellidx(0))
+        xy = plt.gca().lines[0].get_data()
+        assert np.allclose(xy[1], raster.trialidx[cellidx(0)])
         psth.append(psth2)
         cellidx = psth.getindex("cell")
         assert len(cellidx(1)) == len(psth2.setidx)
-
+        psth.plot(cellidx(0))
+        assert len(plt.gca().lines) == 1
         os.remove(os.path.join(pth, "cell01", "unit.mat"))
         os.remove(os.path.join(pth, "cell02", "unit.mat"))
         os.rmdir("Pancake/20130923/session01/array01/channel001/cell01")
