@@ -75,6 +75,12 @@ def test_load():
             assert psth.data.shape == (2, 4)
             assert (psth.data[0, :] == [0, 3, 2, 1]).all()
             assert (psth.data[1, :] == [0, 3, 1, 0]).all()
+            psths = DPT.psth.PSTH([-100., 200., 400., 600.], windowSize=2, trialEvent="stimulus1",
+                                                               sortBy="stimulus1",
+                                                               trialType="reward_on",
+                                                               redoLevel=1, saveLevel=0)
+            assert psths.args["windowSize"] == 2
+            assert psths.data.shape == (2, 3)
 
         with DPT.misc.CWD(os.path.join(pth, "cell02")):
             raster2 = DPT.raster.Raster(-100.0, 500.0, "stimulus1", "reward_on", "stimulus1",
