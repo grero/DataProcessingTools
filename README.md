@@ -27,6 +27,24 @@ celldirs = DPT.levels.get_level_dirs("cell", cwd)
 ### Objects
 ```python
 import DataProcessingTools as DPT
+
+class DirFiles(DPT.DPObject):
+    """
+    DirFiles(redoLevels=0, SaveLevels=0, objectLevel='Session')
+    """
+    def __init__(self, *args, **kwargs):
+        # initialize fields in parent
+        DPT.DPObject.__init__(self, *args, **kwargs)
+        # check for files or directories in current directory
+        dir_listing = os.listdir()
+        # check number of items
+        dnum = len(dir_listing)
+        # create object if there are some items in this directory
+        if dnum > 0:
+            # update fields in parent
+            self.dirs = os.getcwd()
+            self.dir_list = dir_listing
+            self.setidx = [0 for i in range(dnum)] 
 ```
 
 ### A complete example
