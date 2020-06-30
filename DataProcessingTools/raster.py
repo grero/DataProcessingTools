@@ -64,9 +64,9 @@ class Raster(DPObject):
         DPObject.append(self, raster)
         n_old = len(self.spiketimes)
         n_new = n_old + len(raster.spiketimes)
-        self.spiketimes.resize(n_new)
+        self.spiketimes = np.resize(self.spiketimes, n_new)
         self.spiketimes[n_old:n_new] = raster.spiketimes
-        self.trialidx.resize(n_new)
+        self.trialidx = np.resize(self.trialidx, n_new)
         self.trialidx[n_old:n_new] = raster.trialidx
 
         self.trialLabels = np.concatenate((self.trialLabels, raster.trialLabels))
