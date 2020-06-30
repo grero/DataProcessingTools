@@ -66,8 +66,8 @@ class PSTH(DPObject):
             fname = self.filename
         with h5py.File(fname) as ff:
             args = {}
-            for (k,v) in ff["args"].items():
-                self.args[k] = v
+            for (k, v) in ff["args"].items():
+                self.args[k] = v.value
             self.data = ff["counts"][:]
             self.ntrials = self.data.shape[0]
             self.bins = self.args["bins"][:self.data.shape[-1]]
