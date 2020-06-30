@@ -50,10 +50,10 @@ def test_load():
             assert (stim_onset == [0.1, 1.1]).all()
             spiketrain = DPT.spiketrain.Spiketrain()
             assert np.allclose(spiketrain.timestamps, spiketimes)
-            raster = DPT.raster.Raster(-100.0, 500.0, "stimulus_on_1_*", "reward_on", "stimulus1")
+            raster = DPT.raster.Raster(-100.0, 500.0, "stimulus1", "reward_on", "stimulus1")
             assert (raster.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
             assert np.isclose(raster.spiketimes, [0., 50., 200., 300., 400., 0., 100., 200., 300.]).all()
-            psth = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus_on_1_*",
+            psth = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
                                                                sortBy="stimulus1",
                                                                trialType="reward_on",
                                                                redoLevel=1)
