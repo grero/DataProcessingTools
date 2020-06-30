@@ -41,9 +41,9 @@ class PSTH(DPObject):
 
         windowSize = self.args["windowSize"]
         if windowSize > 1:
-            scounts = np.zeros((ntrials, len(bins)-windowSize))
+            scounts = np.zeros((ntrials, len(bins)-windowSize+1))
             for i in range(ntrials):
-                for j in range(len(bins)-windowSize):
+                for j in range(len(bins)-windowSize+1):
                     scounts[i, j] = counts[i, j:j+windowSize].sum()
 
             self.data = scounts
