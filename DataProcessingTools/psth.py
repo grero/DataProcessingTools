@@ -47,10 +47,10 @@ class PSTH(DPObject):
                     scounts[i, j] = counts[i, j:j+windowSize].sum()
 
             self.data = scounts
-            self.bins = bins[:-windowSize]
+            self.bins = np.array(bins[:-windowSize])
         else:
             self.data = counts
-            self.bins = bins
+            self.bins = np.array(bins)
 
         self.ntrials = ntrials
 
