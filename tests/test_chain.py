@@ -28,21 +28,23 @@ def test_load():
 
     tempdir = tempfile.gettempdir()
     with DPT.misc.CWD(tempdir):
-        pth = "Pancake/20130923/session01/array01/channel001/cell01"
-        if not os.path.isdir(pth):
-            os.makedirs(pth)
-            sio.savemat(os.path.join(pth, "unit.mat"), {"timestamps": spiketimes,
-                                                        "spikeForm": [0]})
-        with DPT.misc.CWD(pth):
+        pth = "Pancake/20130923/session01/array01/channel001"
+        for cell in ["cell01", "cell02"]:
+            if not os.path.isdir(os.path.join(pth, cell)):
+                os.makedirs(os.path.join(pth, cell))
+            sio.savemat(os.path.join(pth, cell, "unit.mat"), {"timestamps": spiketimes,
+                                                                  "spikeForm": [0.0]})
+        
+        with DPT.misc.CWD(os.path.join(pth, "cell01")):
             with DPT.misc.CWD(DPT.levels.resolve_level("day")):
-                    # save trial info
-                    with open("event_markers.csv", "w") as csvfile:
-                        writer = csv.writer(csvfile)
-                        writer.writerow(["words", "timestamps"])
-                        for ee in trialEvents:
-                            writer.writerow(ee)
-                    trials = DPT.trialstructures.get_trials()
-                    assert len(trials.events) == len(trialEvents)
+                # save trial info
+                with open("event_markers.csv", "w") as csvfile:
+                    writer = csv.writer(csvfile)
+                    writer.writerow(["words", "timestamps"])
+                    for ee in trialEvents:
+                        writer.writerow(ee)
+                trials = DPT.trialstructures.get_trials()
+                assert len(trials.events) == len(trialEvents)
 
             trials = DPT.trialstructures.get_trials()
             assert len(trials.events) == len(trialEvents)
@@ -50,19 +52,36 @@ def test_load():
             assert (stim_onset == [0.1, 1.1]).all()
             spiketrain = DPT.spiketrain.Spiketrain()
             assert np.allclose(spiketrain.timestamps, spiketimes)
-            raster = DPT.raster.Raster(-100.0, 500.0, "stimulus1", "reward_on", "stimulus1")
+            raster = DPT.raster.Raster(-100.0, 500.0, "stimulus1", "reward_on", "stimulus1",
+                                       redoLevel=1, saveLevel=0)
             assert (raster.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
             assert np.isclose(raster.spiketimes, [0., 50., 200., 300., 400., 0., 100., 200., 300.]).all()
             psth = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
                                                                sortBy="stimulus1",
                                                                trialType="reward_on",
-                                                               redoLevel=1)
+                                                               redoLevel=1, saveLevel=0)
             assert psth.data.shape == (2, 4)
             assert (psth.data[0, :] == [0, 3, 2, 1]).all()
             assert (psth.data[1, :] == [0, 3, 1, 0]).all()
-            os.remove(psth.get_filename())
 
-        os.remove(os.path.join(pth, "unit.mat"))
+        with DPT.misc.CWD(os.path.join(pth, "cell02")):
+            raster2 = DPT.raster.Raster(-100.0, 500.0, "stimulus1", "reward_on", "stimulus1",
+                                        redoLevel=1, saveLevel=0)
+            psth2 = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
+                                                               sortBy="stimulus1",
+                                                               trialType="reward_on",
+                                                               redoLevel=1, saveLevel=0)
+        raster.append(raster2)
+        cellidx = raster.getindex("cell")
+        assert len(cellidx(1)) == len(raster2.setidx)
+
+        psth.append(psth2)
+        cellidx = psth.getindex("cell")
+        assert len(cellidx(1)) == len(psth2.setidx)
+
+        os.remove(os.path.join(pth, "cell01", "unit.mat"))
+        os.remove(os.path.join(pth, "cell02", "unit.mat"))
         os.rmdir("Pancake/20130923/session01/array01/channel001/cell01")
+        os.rmdir("Pancake/20130923/session01/array01/channel001/cell02")
         os.rmdir("Pancake/20130923/session01/array01/channel001")
         os.rmdir("Pancake/20130923/session01/array01")
