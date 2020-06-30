@@ -13,6 +13,10 @@ def test_level_idx():
     obj = MyObj(dirs=["session01/array01/channel01/cell01",
                       "session01/array01/channel01/cell02"])
 
+    # test trial
+    idx = obj.getindex("trial")
+    assert idx(0) == [0]
+
     # test cell level
     idx = obj.getindex("cell")
     assert (idx(0) == [0, 1, 2]).all()
