@@ -159,7 +159,6 @@ def get_trials():
     """
     for Trials in TrialStructure.__subclasses__():
             leveldir = resolve_level(Trials.level)
-            with CWD(leveldir):
-                if os.path.isfile(Trials.filename):
-                    trials = Trials()
-                    return trials
+            if os.path.isfile(os.path.join(leveldir, Trials.filename)):
+                trials = Trials()
+                return trials
