@@ -21,22 +21,34 @@ class Raster(DPObject):
         #TODO: This only works with correct trials for now
         rewardOnset, cidx, stimIdx = trials.get_timestamps("reward_on")
         trialEvent = self.args["trialEvent"]
-        alignto, sidx, stimIdx = trials.get_timestamps(trialEvent)
-        qidx = np.isin(sidx, cidx)
-        trialIdx = sidx[qidx]
-        alignto = 1000*alignto[qidx]
-        sortBy = self.args["sortBy"]
-        if sortBy == "stimulus1":
-            stimnr = 0
-        elif sortBy == "stimulus2":
-            stimnr = 1
-        else:
-            ValueError("Unkonwn trial sorting {0}".format(sortBy))
+        if "stimulus" in trialEvent:
+            if trialEvent == "stimulus1":
+                stimnr = 0
+            elif trialEvent == "stimulus2":
+                stimnr = 1
+            else:
+                stimnr = -1
+                ValueError("Unkonwn trial sorting {0}".format(trialEvent))
 
-        ts, identity, trialLabel = trials.get_stim(stimnr, trialIdx)
+            alignto, stimidx, trialLabel = trials.get_stim(stimnr, cidx)
+            alignto = 1000*np.array(alignto)
+        else:
+            alignto, sidx, stimIdx = trials.get_timestamps(trialEvent)
+            qidx = np.isin(sidx, cidx)
+            trialIdx = sidx[qidx]
+            alignto = 1000*alignto[qidx]
+            sortBy = self.args["sortBy"]
+            if sortBy == "stimulus1":
+                stimnr = 0
+            elif sortBy == "stimulus2":
+                stimnr = 1
+            else:
+                ValueError("Unkonwn trial sorting {0}".format(sortBy))
+
+            ts, identity, trialLabel = trials.get_stim(stimnr, trialIdx)
         #TODO: Never reload spike trains
         spiketrain = Spiketrain(*args, **kwargs)
-        spiketimes = spiketrain.timestamps
+        spiketimes = spiketrain.timestamps.flatten()
         tmin = self.args["tmin"]
         tmax = self.args["tmax"]
         bidx = np.digitize(spiketimes, alignto+tmin)
