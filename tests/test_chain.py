@@ -88,7 +88,17 @@ def test_load():
             psth2 = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
                                                                sortBy="stimulus1",
                                                                trialType="reward_on",
-                                                               redoLevel=1, saveLevel=0)
+                                                               redoLevel=1, saveLevel=1)
+
+            psth3 = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
+                                                               sortBy="stimulus1",
+                                                               trialType="reward_on",
+                                                               redoLevel=0, saveLevel=0)
+            os.remove(psth3.get_filename())
+            assert (psth2.data == psth3.data).all()
+            assert (psth2.args["windowSize"] == psth3.args["windowSize"])
+            assert (psth2.args["bins"] == psth3.args["bins"]).all()
+
         raster.append(raster2)
         cellidx = raster.getindex("cell")
         assert len(cellidx(1)) == len(raster2.setidx)
