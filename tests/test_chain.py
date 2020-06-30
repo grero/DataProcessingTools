@@ -14,6 +14,8 @@ def test_load():
                    (WorkingMemoryTrials.trialevents["trial_start"], 0.05),
                    ("10100001", 0.1),
                    ("10000001", 0.2),
+                   ("01100001", 0.1),
+                   ("01000001", 0.2),
                    (WorkingMemoryTrials.trialevents["response_on"], 0.3),
                    (WorkingMemoryTrials.trialevents["reward_on"], 0.4),
                    (WorkingMemoryTrials.trialevents["reward_off"], 0.5),
@@ -21,6 +23,8 @@ def test_load():
                    (WorkingMemoryTrials.trialevents["trial_start"], 1.0),
                    ("10100001", 1.1),
                    ("10000001", 1.2),
+                   ("01100001", 1.1),
+                   ("01000001", 1.2),
                    (WorkingMemoryTrials.trialevents["response_on"], 1.3),
                    (WorkingMemoryTrials.trialevents["reward_on"], 1.4),
                    (WorkingMemoryTrials.trialevents["reward_off"], 1.5),
@@ -56,6 +60,10 @@ def test_load():
                                        redoLevel=1, saveLevel=0)
             assert (raster.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
             assert np.isclose(raster.spiketimes, [0., 50., 200., 300., 400., 0., 100., 200., 300.]).all()
+            raster2 = DPT.raster.Raster(-100.0, 500.0, "stimulus2", "reward_on", "stimulus2",
+                                       redoLevel=1, saveLevel=0)
+            assert (raster2.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
+            assert np.isclose(raster2.spiketimes, [0., 50., 200., 300., 400., 0., 100., 200., 300.]).all()
             psth = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
                                                                sortBy="stimulus1",
                                                                trialType="reward_on",
