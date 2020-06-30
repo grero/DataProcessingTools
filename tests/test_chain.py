@@ -65,6 +65,9 @@ def test_load():
                                        redoLevel=1, saveLevel=0)
             assert (raster2.trialidx == [0, 0, 0, 0, 0, 1, 1, 1, 1]).all()
             assert np.isclose(raster2.spiketimes, [0., 50., 200., 300., 400., 0., 100., 200., 300.]).all()
+            raster3 = DPT.raster.Raster(-100.0, 500.0, "reward_on", "reward_on", "stimulus2",
+                                       redoLevel=1, saveLevel=0)
+            assert (raster3.trialidx == [0, 0, 0, 1]).all()
             psth = DPT.psth.PSTH([-100., 200., 400., 600.], 1, trialEvent="stimulus1",
                                                                sortBy="stimulus1",
                                                                trialType="reward_on",
