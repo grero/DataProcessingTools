@@ -45,8 +45,7 @@ class WorkingMemoryTrials(TrialStructure):
         self.reverse_map = dict((v, k) for k, v in self.trialevents.items())
         TrialStructure.__init__(self, **kwargs)
         # always load
-        if os.path.isfile(self.filename):
-            self.load()
+        self.load()
 
     def load(self, fname=None):
         sessiondir = get_level_name("session")
