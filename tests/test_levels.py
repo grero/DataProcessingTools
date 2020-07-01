@@ -40,3 +40,17 @@ def test_level():
 
     level_path = DPT.levels.get_level_path("session", dir1)
     assert level_path == "Pancake/20130923/session01"
+
+def test_shortnames():
+    dir1 = "Pancake/20130923/session01/array02/channel033/cell01"
+    aa = DPT.levels.get_shortname("subject", dir1)
+    assert aa == "P"
+    aa = DPT.levels.get_shortname("session", dir1)
+    assert aa == "s01"
+    aa = DPT.levels.get_shortname("array", dir1)
+    assert aa == "a02"
+    aa = DPT.levels.get_shortname("channel", dir1)
+    assert aa == "g033"
+    aa = DPT.levels.get_shortname("cell", dir1)
+    assert aa == "c01"
+    aa = DPT.levels.get_shortname("cell", dir1)
