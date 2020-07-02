@@ -131,7 +131,8 @@ class DPObject():
         appended
         """
         h = self.hash()
-        fname = self.filename.replace(".mat", "_{0}.mat".format(h))
+        fn, ext = os.path.splitext(self.filename)
+        fname = self.filename.replace(ext, "_{0}{1}".format(h, ext))
         return fname
 
     def load(self, fname=None):
