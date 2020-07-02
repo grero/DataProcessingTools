@@ -54,3 +54,8 @@ def test_shortnames():
     aa = DPT.levels.get_shortname("cell", dir1)
     assert aa == "c01"
     aa = DPT.levels.get_shortname("cell", dir1)
+
+    pth = "/Volumes/Data/workingMemory/Pancake/20230923/session01"
+    npth = DPT.levels.normpath(pth)
+    assert npth == "Pancake/20230923/session01"
+
