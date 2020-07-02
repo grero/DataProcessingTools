@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pylab as plt
 from . import levels
 
 
@@ -8,12 +9,32 @@ class DPObject():
         self.dirs = []
         self.setidx = []
         self.plotopts = {}
+        self.current_idx = None
 
-    def plot(self, i, fig):
+    def plot(self, i, ax=None):
         pass
 
-    def update_plotopts(self, ax):
-        pass
+    def update_plotopts(self, plotopts, ax=None, splotopts=None):
+        """
+        Update this objects plotopts with the specified plotopts,
+        triggering a re-plot only if any option actually changed.
+        """
+        if splotopts is None:
+            splotopts = self.plotopts
+
+        if ax is None:
+            ax = plt.gca()
+        replot = False
+        for (k, v) in plotopts.items():
+            if isinstance(v, dict):
+                self.update_plotopts(v, ax, self.plotopts[k])
+            else:
+                if v != splotopts[k]:
+                    splotopts[k] = v
+                    replot = True
+
+        if replot:
+            self.plot(self.current_idx, ax=ax)
 
     def __add__(self, obj):
         pass
