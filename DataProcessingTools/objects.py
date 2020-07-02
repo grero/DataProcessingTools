@@ -11,6 +11,9 @@ class DPObject():
 
     def __init__(self, *args, **kwargs):
         self.dirs = [os.getcwd()]
+        normpath = kwargs.get("normpath", True)
+        if normpath:
+            self.dirs = [levels.normpath(d) for d in self.dirs]
         self.setidx = []
         self.plotopts = {}
         self.current_idx = None
