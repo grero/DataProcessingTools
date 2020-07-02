@@ -13,7 +13,7 @@ class PSTH(DPObject):
     """
     PSTH(bins,windowSize=1, dirs=None, redoLevel=0, saveLevel=1)
     """
-    filename = "psth.mat"
+    filename = "psth.hkl"
     argsList = ["bins", ("windowSize", 1)]
 
     def __init__(self, *args, **kwargs):
@@ -61,43 +61,6 @@ class PSTH(DPObject):
 
         if saveLevel > 0:
             self.save()
-
-    def load(self, fname=None):
-        DPObject.load(self)
-        if fname is None:
-            fname = self.filename
-        with h5py.File(fname) as ff:
-            args = {}
-            for (k, v) in ff["args"].items():
-                self.args[k] = v.value
-            self.data = ff["counts"][:]
-            self.ntrials = self.data.shape[0]
-            self.bins = self.args["bins"][:self.data.shape[-1]]
-            self.trialLabels = ff["trialLabels"][:]
-
-    def hash(self):
-        """
-        Returns a hash representation of this object's arguments.
-        """
-        #TODO: This is not replicable across sessions
-        h = hashlib.sha1(b"psth")
-        for (k, v) in self.args.items():
-            x = np.atleast_1d(v)
-            h.update(x.tobytes())
-        return h.hexdigest()
-
-    def save(self, fname=None):
-        if fname is None:
-            fname = self.get_filename()
-
-        with h5py.File(fname, "w") as ff:
-            args = ff.create_group("args")
-            args["bins"] = self.args["bins"]
-            args["windowSize"] = self.args["windowSize"]
-            ff["counts"] = self.data
-            ff["trialLabels"] = self.trialLabels
-            ff["dirs"] = np.array(self.dirs, dtype='S256')
-            ff["setidx"] = self.setidx
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():
