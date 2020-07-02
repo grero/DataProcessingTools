@@ -66,7 +66,7 @@ class PSTH(DPObject):
         DPObject.load(self)
         if fname is None:
             fname = self.filename
-        with h5py.File(fname) as ff:
+        with h5py.File(fname, "r") as ff:
             args = {}
             for (k, v) in ff["args"].items():
                 self.args[k] = v.value

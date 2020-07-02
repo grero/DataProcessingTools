@@ -138,7 +138,7 @@ class DPObject():
         if fname is None:
             fname = self.get_filename()
 
-        with h5py.File(fname) as ff:
+        with h5py.File(fname, "r") as ff:
             self.dirs = [s.decode() for s in ff["dirs"][:]]
             self.setidx = ff["setidx"][:].tolist()
 
