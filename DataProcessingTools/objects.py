@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pylab as plt
+import pickle
+import hashlib
 from . import levels
 import h5py
 import os
@@ -141,6 +143,10 @@ class DPObject():
         with h5py.File(fname) as ff:
             self.dirs = [s.decode() for s in ff["dirs"][:]]
             self.setidx = ff["setidx"][:].tolist()
+
+    def hash(self):
+        s = pickle.dumps(self.args)
+        return hashlib.md5(s).hexdigest()
 
 class DPObjects():
     def __init__(self, objects):
