@@ -105,3 +105,13 @@ def get_level_path(target_level, cwd=None):
         if ll == target_level:
             break
     return q
+
+def normpath(cwd):
+    """
+    Normalize the path in `cwd` by referring it to the lowest level
+    in the current hierarchy.
+    """
+    this_level = level(cwd)
+    this_idx = levels.index(this_level)
+    parts = cwd.split(os.path.sep)
+    return os.path.join(*parts[-this_idx:])
