@@ -97,7 +97,7 @@ def test_load():
             os.remove(psth3.get_filename())
             assert (psth2.data == psth3.data).all()
             assert (psth2.args["windowSize"] == psth3.args["windowSize"])
-            assert (psth2.args["bins"] == psth3.args["bins"]).all()
+            assert np.allclose(psth2.args["bins"], psth3.args["bins"])
 
         raster.append(raster2)
         cellidx = raster.getindex("cell")

@@ -7,6 +7,7 @@ import os
 
 class MyObj(DPT.objects.DPObject):
     argsList = ["bins"]
+    filename = "myobj.hkl"
 
     def __init__(self,  *args, **kwargs):
         DPT.objects.DPObject.__init__(self, *args, **kwargs)
@@ -83,6 +84,9 @@ def test_append():
     idx = obj1.getindex(None)
     assert idx(0) is None
 
+    obj.save()
+    assert os.path.isfile(obj.get_filename())
+    os.remove(obj.get_filename())
 
 def test_object():
 
