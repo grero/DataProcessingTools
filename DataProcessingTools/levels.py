@@ -4,6 +4,22 @@ import glob
 levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
 level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel[0-9]*", "cell[0-9]*"]
 
+def get_numbers(ss):
+    return "".join(filter(str.isdigit, ss))
+
+
+shortnames = {"subjects": lambda x: "",
+              "subject": lambda x: x[0],
+              "day": lambda x: x,
+              "session": lambda x: "s{0}".format(get_numbers(x)),
+              "array": lambda x: "a{0}".format(get_numbers(x)),
+              "channel": lambda x: "g{0}".format(get_numbers(x)),
+              "cell": lambda x: "c{0}".format(get_numbers(x))}
+
+
+def get_shortname(level, cwd =None):
+    level_name = get_level_name(level, cwd)
+    return shortnames[level](level_name)
 
 def level(cwd=None):
     if cwd is None:

@@ -8,10 +8,10 @@ import re
 
 
 class TrialStructure(DPObject):
-    def __init__(self):
-        DPObject.__init__(self)
+    def __init__(self, **kwargs):
         self.events = []
         self.timestamps = []
+        DPObject.__init__(self, **kwargs)
 
     def get_timestamps(self, event_label):
         """
@@ -25,34 +25,37 @@ class TrialStructure(DPObject):
 class WorkingMemoryTrials(TrialStructure):
     filename = "event_markers.csv"
     level = "day"
-    def __init__(self):
-        TrialStructure.__init__(self)
-        self.trialevents = {"session_start": "11000000",
-                            "trial_start": "00000000",
-                            "fix_start": "00000001",
-                            "stimBlankStart": "00000011",
-                            "delay_start": "00000100",
-                            "response_on": "00000101",
-                            "reward_on": "00000110",
-                            "failure": "00000111",
-                            "trial_end": "00100000",
-                            "manual_reward_on": "00001000",
-                            "stim_start": "00001111",
-                            "reward_off ": "00000100",
-                            "trial_start": "00000010",
-                            "target_on": "10100000",
-                            "target_off": "10000000",
-                            "left_fixation": "00011101"}
-        self.reverse_map = dict((v,k) for k,v in self.trialevents.items())
+    trialevents = {"session_start": "11000000",
+                   "fix_start": "00000001",
+                   "stimBlankStart": "00000011",
+                   "delay_start": "00000100",
+                   "response_on": "00000101",
+                   "reward_on": "00000110",
+                   "failure": "00000111",
+                   "trial_end": "00100000",
+                   "manual_reward_on": "00001000",
+                   "stim_start": "00001111",
+                   "reward_off": "00000100",
+                   "trial_start": "00000010",
+                   "target_on": "10100000",
+                   "target_off": "10000000",
+                   "left_fixation": "00011101"}
+
+    def __init__(self, **kwargs):
+        self.reverse_map = dict((v, k) for k, v in self.trialevents.items())
+        TrialStructure.__init__(self, **kwargs)
+        # always load
         self.load()
 
-    def load(self):
+    def load(self, fname=None):
         sessiondir = get_level_name("session")
         leveldir = resolve_level(self.level)
         tidx = -1
         stidx = -1
         self.trialidx = []
         self.stimidx = []
+        self.events = []
+        self.timestamps = []
         with open(os.path.join(leveldir, self.filename), "r") as csvfile:
             data = csv.DictReader(csvfile)
             for row in data:
@@ -113,14 +116,19 @@ class WorkingMemoryTrials(TrialStructure):
         trials.get_timestamps("stimulus_on_1_*")
 
         """
-        idx = np.zeros((len(self.events), ), dtype=np.bool)
+        events = self.events
+        trialidx = self.trialidx
+        timestamps = self.timestamps
+        stimidx = self.stimidx
+
+        idx = np.zeros((len(events), ), dtype=np.bool)
         p = re.compile(event_label)
-        for (i,ee) in enumerate(self.events):
+        for (i ,ee) in enumerate(events):
             m = p.match(ee)
-            if m is not None: 
+            if m is not None:
                 idx[i] = True
-        
-        return self.timestamps[idx], self.trialidx[idx], self.stimidx[idx]
+
+        return timestamps[idx], trialidx[idx], stimidx[idx]
 
     def get_stim(self, stimidx=0, trialidx=None):
         """
@@ -151,7 +159,6 @@ def get_trials():
     """
     for Trials in TrialStructure.__subclasses__():
             leveldir = resolve_level(Trials.level)
-            with CWD(leveldir):
-                if os.path.isfile(Trials.filename):
-                    trials = Trials()
-                    return trials
+            if os.path.isfile(os.path.join(leveldir, Trials.filename)):
+                trials = Trials()
+                return trials

@@ -4,20 +4,34 @@ from .objects import DPObject
 from . import levels
 from .raster import Raster
 import os
+import glob
+import h5py
+import hashlib
 
 
 class PSTH(DPObject):
-    def __init__(self, bins, windowsize=1, spiketimes=None, trialidx=None, triallabels=None,
-                 alignto=None, trial_event=None, dirs=None):
-        DPObject.__init__(self)
-        tmin = bins[0]
-        tmax = bins[-1]
-        if spiketimes is None:
-            # attempt to load from the current directory
-            raster = Raster(tmin, tmax, alignto=alignto, trial_event=trial_event)
-            spiketimes = raster.spiketimes
-            trialidx = raster.trialidx
-            triallabels = raster.trial_labels
+    """
+    PSTH(bins,windowSize=1, dirs=None, redoLevel=0, saveLevel=1)
+    """
+    filename = "psth.mat"
+    argsList = ["bins", ("windowSize", 1)]
+
+    def __init__(self, *args, **kwargs):
+        """
+        Return a PSTH object using the specified bins
+        """
+        DPObject.__init__(self, *args, **kwargs)
+
+    def create(self, *args, **kwargs):
+        saveLevel = kwargs.get("saveLevel", 1)
+        bins = self.args["bins"]
+
+        # attempt to load from the current directory
+        raster = Raster(bins[0], bins[-1], **kwargs)
+        spiketimes = raster.spiketimes
+        trialidx = raster.trialidx
+        self.trialLabels = raster.trialLabels
+
         ntrials = trialidx.max()+1
         counts = np.zeros((ntrials, np.size(bins)), dtype=np.int)
         for i in range(np.size(spiketimes)):
@@ -25,41 +39,65 @@ class PSTH(DPObject):
             if 0 <= jj < np.size(bins):
                 counts[trialidx[i], jj] += 1
 
-        self.windowsize = windowsize
-        if windowsize > 1:
-            scounts = np.zeros((ntrials, len(bins)-windowsize))
+        windowSize = self.args["windowSize"]
+        if windowSize > 1:
+            scounts = np.zeros((ntrials, len(bins)-windowSize+1))
             for i in range(ntrials):
-                for j in range(len(bins)-windowsize):
-                    scounts[i, j] = counts[i, j:j+windowsize].sum()
+                for j in range(len(bins)-windowSize+1):
+                    scounts[i, j] = counts[i, j:j+windowSize].sum()
 
             self.data = scounts
-            self.bins = bins[:-windowsize]
+            self.bins = np.array(bins[:-windowSize])
         else:
             self.data = counts
-            self.bins = bins
+            self.bins = np.array(bins)
 
         self.ntrials = ntrials
-        if triallabels is None:
-            self.trial_labels = np.ones((ntrials,))
-        elif np.size(triallabels) == ntrials:
-            self.trial_labels = triallabels
-        elif np.size(triallabels) == np.size(spiketimes):
-            dd = {}
-            for t, l in zip(trialidx, triallabels):
-                dd[t] = l
-            self.trial_labels = np.array([dd[t] for t in range(ntrials)])
-        else:
-            self.trial_labels = triallabels
 
         # index to keep track of sets, e.g. trials
         self.setidx = [0 for i in range(self.ntrials)]
-        if dirs is not None:
-            self.dirs = dirs
-        else:
-            self.dirs = [os.getcwd()]
-        
+
         self.plotopts = {"group_by_label": True}
-        self.current_idx = None
+
+        if saveLevel > 0:
+            self.save()
+
+    def load(self, fname=None):
+        DPObject.load(self)
+        if fname is None:
+            fname = self.filename
+        with h5py.File(fname) as ff:
+            args = {}
+            for (k, v) in ff["args"].items():
+                self.args[k] = v.value
+            self.data = ff["counts"][:]
+            self.ntrials = self.data.shape[0]
+            self.bins = self.args["bins"][:self.data.shape[-1]]
+            self.trialLabels = ff["trialLabels"][:]
+
+    def hash(self):
+        """
+        Returns a hash representation of this object's arguments.
+        """
+        #TODO: This is not replicable across sessions
+        h = hashlib.sha1(b"psth")
+        for (k, v) in self.args.items():
+            x = np.atleast_1d(v)
+            h.update(x.tobytes())
+        return h.hexdigest()
+
+    def save(self, fname=None):
+        if fname is None:
+            fname = self.get_filename()
+
+        with h5py.File(fname, "w") as ff:
+            args = ff.create_group("args")
+            args["bins"] = self.args["bins"]
+            args["windowSize"] = self.args["windowSize"]
+            ff["counts"] = self.data
+            ff["trialLabels"] = self.trialLabels
+            ff["dirs"] = np.array(self.dirs, dtype='S256')
+            ff["setidx"] = self.setidx
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():
@@ -67,7 +105,7 @@ class PSTH(DPObject):
 
         DPObject.append(self, psth)
         self.data = np.concatenate((self.data, psth.data), axis=0)
-        self.trial_labels = np.concatenate((self.trial_labels, psth.trial_labels),
+        self.trialLabels = np.concatenate((self.trialLabels, psth.trialLabels),
                                            axis=0)
         self.ntrials = self.ntrials + psth.ntrials
 
@@ -89,13 +127,13 @@ class PSTH(DPObject):
             ax = gca()
         if not overlay:
             ax.clear()
-        trial_labels = self.trial_labels[i]
+        trialLabels = self.trialLabels[i]
         data = self.data[i, :]
-        labels = np.unique(trial_labels)
+        labels = np.unique(trialLabels)
         if self.plotopts["group_by_label"]:
             for li in range(len(labels)):
                 label = labels[li]
-                idx = trial_labels == label
+                idx = trialLabels == label
                 mu = data[idx, :].mean(0)
                 sigma = data[idx, :].std(0)
                 ax.plot(self.bins, mu)

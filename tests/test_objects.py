@@ -1,11 +1,21 @@
 import DataProcessingTools as DPT
 
 
+class MyObj(DPT.objects.DPObject):
+    def __init__(self, dirs, *args, **kwargs):
+        DPT.objects.DPObject.__init__(self, *args, **kwargs)
+        self.dirs = dirs
+        for i in range(len(dirs)):
+            self.setidx.extend([i for j in range(3)])
+
+
 def test_level_idx():
-    obj = DPT.objects.DPObject()
-    obj.dirs = ["session01/array01/channel01/cell01",
-                "session01/array01/channel01/cell02"]
-    obj.setidx = [0, 0, 0, 1, 1, 1]
+    obj = MyObj(dirs=["session01/array01/channel01/cell01",
+                      "session01/array01/channel01/cell02"])
+
+    # test trial
+    idx = obj.getindex("trial")
+    assert idx(0) == [0]
 
     # test cell level
     idx = obj.getindex("cell")
@@ -18,15 +28,12 @@ def test_level_idx():
 
 
 def test_append():
-    obj1 = DPT.objects.DPObject()
-    obj1.dirs = ["session01/array01/channel001/cell01",
-                 "session01/array01/channel001/cell02"]
-    obj1.setidx = [0, 0, 0, 1, 1, 1]
 
-    obj2 = DPT.objects.DPObject()
-    obj2.dirs = ["session01/array02/channel033/cell01",
-                 "session01/array02/channel034/cell01"]
-    obj2.setidx = [0, 0, 0, 1, 1, 1]
+    obj1 = MyObj(dirs=["session01/array01/channel001/cell01",
+                        "session01/array01/channel001/cell02"])
+
+    obj2 = MyObj(dirs=["session01/array02/channel033/cell01",
+                         "session01/array02/channel034/cell01"])
 
     obj1.append(obj2)
 
@@ -48,3 +55,16 @@ def test_append():
 
     idx = obj1.getindex(None)
     assert idx(0) is None
+
+
+def test_object():
+
+    class MyObj2(DPT.objects.DPObject):
+        argsList = ["tmin", "tmax"]
+        filename = "test.mat"
+
+    obj = MyObj2(-0.1, 1.0)
+
+    assert obj.args["tmin"] == -0.1
+    assert obj.args["tmax"] == 1.0
+    

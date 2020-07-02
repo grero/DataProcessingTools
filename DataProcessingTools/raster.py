@@ -7,44 +7,70 @@ import os
 
 
 class Raster(DPObject):
-    def __init__(self, tmin, tmax, alignto=None, trial_event=None,
-                 spiketimes=None,
-                 trial_labels=None, dirs=None):
-        DPObject.__init__(self)
-        if spiketimes is None:
-            spiketrain = Spiketrain()
-            spiketimes = spiketrain.timestamps.flatten()
-        if alignto is None:
-            trials = get_trials()
-            # convert from seconds to ms
-            alignto = 1000*trials.get_timestamps(trial_event)
-        if trial_labels is None:
-            trial_labels = np.arange(len(alignto))
+    """
+    Raster(tmin, tmax, TrialEvent,trialType, sortBy)
+    """
+    filename = "raster.mat"
+    argsList = ["tmin", "tmax", "trialEvent", "trialType", "sortBy"]
 
+    def __init__(self, *args, **kwargs):
+        DPObject.__init__(self, *args, **kwargs)
+
+    def create(self, *args, **kwargs):
+        trials = get_trials()
+        #TODO: This only works with correct trials for now
+        rewardOnset, cidx, stimIdx = trials.get_timestamps("reward_on")
+        trialEvent = self.args["trialEvent"]
+        if "stimulus" in trialEvent:
+            if trialEvent == "stimulus1":
+                stimnr = 0
+            elif trialEvent == "stimulus2":
+                stimnr = 1
+            else:
+                stimnr = -1
+                ValueError("Unkonwn trial sorting {0}".format(trialEvent))
+
+            alignto, stimidx, trialLabel = trials.get_stim(stimnr, cidx)
+            alignto = 1000*np.array(alignto)
+        else:
+            alignto, sidx, stimIdx = trials.get_timestamps(trialEvent)
+            qidx = np.isin(sidx, cidx)
+            trialIdx = sidx[qidx]
+            alignto = 1000*alignto[qidx]
+            sortBy = self.args["sortBy"]
+            if sortBy == "stimulus1":
+                stimnr = 0
+            elif sortBy == "stimulus2":
+                stimnr = 1
+            else:
+                ValueError("Unkonwn trial sorting {0}".format(sortBy))
+
+            ts, identity, trialLabel = trials.get_stim(stimnr, trialIdx)
+        #TODO: Never reload spike trains
+        spiketrain = Spiketrain(*args, **kwargs)
+        spiketimes = spiketrain.timestamps.flatten()
+        tmin = self.args["tmin"]
+        tmax = self.args["tmax"]
         bidx = np.digitize(spiketimes, alignto+tmin)
         idx = (bidx > 0) & (bidx <= np.size(alignto))
         raster = spiketimes[idx] - alignto[bidx[idx]-1]
         ridx = (raster > tmin) & (raster < tmax)
         self.spiketimes = raster[ridx]
         self.trialidx = bidx[idx][ridx]-1
-        self.trial_labels = trial_labels
+        self.trialLabels = trialLabel
         self.setidx = [0 for i in range(len(self.trialidx))]
-        if dirs is None:
-            self.dirs = [os.getcwd()]
-        else:
-            self.dirs = dirs
         self.plotopts = {}
 
     def append(self, raster):
         DPObject.append(self, raster)
         n_old = len(self.spiketimes)
         n_new = n_old + len(raster.spiketimes)
-        self.spiketimes.resize(n_new)
+        self.spiketimes = np.resize(self.spiketimes, n_new)
         self.spiketimes[n_old:n_new] = raster.spiketimes
-        self.trialidx.resize(n_new)
+        self.trialidx = np.resize(self.trialidx, n_new)
         self.trialidx[n_old:n_new] = raster.trialidx
 
-        self.trial_labels = np.concatenate((self.trial_labels, raster.trial_labels))
+        self.trialLabels = np.concatenate((self.trialLabels, raster.trialLabels))
 
     def plot(self, idx=None, ax=None, overlay=False):
         if ax is None:

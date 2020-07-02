@@ -1,15 +1,47 @@
 import numpy as np
 import matplotlib.pylab as plt
 from . import levels
+import h5py
+import os
 
 
 class DPObject():
+    argsList = []
+    filename = ""
+
     def __init__(self, *args, **kwargs):
-        self.data = np.ndarray((0, 0))
-        self.dirs = []
+        self.dirs = [os.getcwd()]
         self.setidx = []
         self.plotopts = {}
         self.current_idx = None
+        self.args = {}
+        # process positional arguments
+        # TODO: We need to somehow consume these, ie. remove the processed ones
+        pargs = [p for p in filter(lambda t: not isinstance(t, tuple), type(self).argsList)]
+        qargs = pargs.copy()
+        for (k, v) in zip(pargs, args):
+            self.args[k] = v
+            qargs.remove(k)
+        # run the remaining throgh kwargs
+        for k in qargs:
+            if k in kwargs.keys():
+                self.args[k] = kwargs[k]
+
+        # process keyword arguments
+        kargs = filter(lambda t: isinstance(t, tuple), type(self).argsList)
+        for (k, v) in kargs:
+            self.args[k] = kwargs.get(k, v)
+
+        redoLevel = kwargs.get("redoLevel", 0)
+        fname = self.get_filename()
+        if redoLevel == 0 and os.path.isfile(fname):
+            self.load(fname)
+        else:
+            # create object
+            self.create(*args, **kwargs)
+
+    def create(self, *args, **kwargs):
+        pass
 
     def plot(self, i, ax=None):
         pass
@@ -87,6 +119,25 @@ class DPObject():
         for d in obj.dirs:
             self.dirs.append(d)
 
+    def get_filename(self):
+        """
+        Return the base filename with an argument hash
+        appended
+        """
+        h = self.hash()
+        fname = self.filename.replace(".mat", "_{0}.mat".format(h))
+        return fname
+
+    def hash(self):
+        pass
+
+    def load(self, fname=None):
+        if fname is None:
+            fname = self.get_filename()
+
+        with h5py.File(fname) as ff:
+            self.dirs = [s.decode() for s in ff["dirs"][:]]
+            self.setidx = ff["setidx"][:].tolist()
 
 class DPObjects():
     def __init__(self, objects):
