@@ -10,7 +10,7 @@ class Raster(DPObject):
     """
     Raster(tmin, tmax, TrialEvent,trialType, sortBy)
     """
-    filename = "raster.mat"
+    filename = "raster.hkl"
     argsList = ["tmin", "tmax", "trialEvent", "trialType", "sortBy"]
 
     def __init__(self, *args, **kwargs):

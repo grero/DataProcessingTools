@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pylab as plt
 import pickle
+import hickle
 import hashlib
 from . import levels
 import h5py
@@ -130,19 +131,24 @@ class DPObject():
         appended
         """
         h = self.hash()
-        fname = self.filename.replace(".mat", "_{0}.mat".format(h))
+        fn, ext = os.path.splitext(self.filename)
+        fname = self.filename.replace(ext, "_{0}{1}".format(h, ext))
         return fname
-
-    def hash(self):
-        pass
 
     def load(self, fname=None):
         if fname is None:
             fname = self.get_filename()
+        data = hickle.load(fname)
+        for (k, v) in data.items():
+            if k == "args":
+                self.args = v
+            else:
+                setattr(self, k, v)
 
-        with h5py.File(fname) as ff:
-            self.dirs = [s.decode() for s in ff["dirs"][:]]
-            self.setidx = ff["setidx"][:].tolist()
+    def save(self, fname=None):
+        if fname is None:
+            fname = self.get_filename()
+        hickle.dump(self.__dict__, fname, mode="w")
 
     def hash(self):
         s = pickle.dumps(self.args)
