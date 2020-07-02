@@ -7,7 +7,6 @@ level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel
 def get_numbers(ss):
     return "".join(filter(str.isdigit, ss))
 
-
 shortnames = {"subjects": lambda x: "",
               "subject": lambda x: x[0],
               "day": lambda x: x,
