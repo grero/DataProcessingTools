@@ -51,6 +51,8 @@ def test_append():
 
         with DPT.misc.CWD(dirs[0]):
             obj1 = MyObj([0.1, 0.2, 0.3])
+            h = obj1.hash()
+            assert h == "c8720126006af0f987d71347a63e77bc"
 
         for d in dirs[1:]:
             with DPT.misc.CWD(d):
