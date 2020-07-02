@@ -5,14 +5,22 @@ import os
 
 
 class Spiketrain(DPObject):
-    def __init__(self):
-        DPObject.__init__(self)
-        self.level = "cell"
-        self.filename = "unit.mat"
+    """
+    Spiketrain()
+    """
+    level = "cell"
+    filename = "unit.mat"
+
+    def __init__(self, *args, **kwargs):
+        DPObject.__init__(self, *args, **kwargs)
+        # always load since we do not create spike trains here.
         if os.path.isfile(self.filename):
             self.load()
 
-    def load(self):
+    def load(self, fname=None):
         q = sio.loadmat(self.filename)
         self.timestamps = q["timestamps"]
         self.spikeshape = q["spikeForm"]
+
+    def get_filename(self):
+        return self.filename
