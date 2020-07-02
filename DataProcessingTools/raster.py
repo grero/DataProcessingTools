@@ -59,6 +59,7 @@ class Raster(DPObject):
         self.trialidx = bidx[idx][ridx]-1
         self.trialLabels = trialLabel
         self.setidx = [0 for i in range(len(self.trialidx))]
+        self.plotopts = {}
 
     def append(self, raster):
         DPObject.append(self, raster)

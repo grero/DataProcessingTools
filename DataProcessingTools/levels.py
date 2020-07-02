@@ -7,7 +7,6 @@ level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel
 def get_numbers(ss):
     return "".join(filter(str.isdigit, ss))
 
-
 shortnames = {"subjects": lambda x: "",
               "subject": lambda x: x[0],
               "day": lambda x: x,
@@ -106,3 +105,13 @@ def get_level_path(target_level, cwd=None):
         if ll == target_level:
             break
     return q
+
+def normpath(cwd):
+    """
+    Normalize the path in `cwd` by referring it to the lowest level
+    in the current hierarchy.
+    """
+    this_level = level(cwd)
+    this_idx = levels.index(this_level)
+    parts = cwd.split(os.path.sep)
+    return os.path.join(*parts[-this_idx:])

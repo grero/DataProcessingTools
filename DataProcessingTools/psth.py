@@ -56,7 +56,9 @@ class PSTH(DPObject):
 
         # index to keep track of sets, e.g. trials
         self.setidx = [0 for i in range(self.ntrials)]
-        
+
+        self.plotopts = {"group_by_label": True}
+
         if saveLevel > 0:
             self.save()
 
@@ -108,6 +110,10 @@ class PSTH(DPObject):
         self.ntrials = self.ntrials + psth.ntrials
 
     def plot(self, i=None, ax=None, overlay=False):
+        if i is None:
+            i = range(len(self.trial_labels))
+
+        self.current_idx = i
         if ax is None:
             ax = gca()
         if not overlay:
@@ -115,11 +121,18 @@ class PSTH(DPObject):
         trialLabels = self.trialLabels[i]
         data = self.data[i, :]
         labels = np.unique(trialLabels)
-
-        for li in range(len(labels)):
-            label = labels[li]
-            idx = trialLabels == label
-            mu = data[idx, :].mean(0)
-            sigma = data[idx, :].std(0)
+        if self.plotopts["group_by_label"]:
+            for li in range(len(labels)):
+                label = labels[li]
+                idx = trialLabels == label
+                mu = data[idx, :].mean(0)
+                sigma = data[idx, :].std(0)
+                ax.plot(self.bins, mu)
+                ax.fill_between(self.bins, mu-sigma, mu+sigma)
+        else:
+            # collapse across labels
+            mu = data.mean(0)
+            sigma = data.std(0)
             ax.plot(self.bins, mu)
             ax.fill_between(self.bins, mu-sigma, mu+sigma)
+
