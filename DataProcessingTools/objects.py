@@ -11,6 +11,7 @@ import os
 class DPObject():
     argsList = []
     filename = ""
+    level = None
 
     def __init__(self, *args, **kwargs):
         self.dirs = [os.getcwd()]
