@@ -147,13 +147,19 @@ class DPObject():
         for (k, v) in data.items():
             if k == "args":
                 self.args = v
+            elif k == "indexer":
+                pass
             else:
                 setattr(self, k, v)
 
     def save(self, fname=None):
         if fname is None:
             fname = self.get_filename()
-        hickle.dump(self.__dict__, fname, mode="w")
+        tosave = {}
+        for (k, v) in self.__dict__.items():
+            if k != "indexer":
+                tosave[k] = v
+        hickle.dump(tosave, fname, mode="w")
 
     def hash(self):
         s = pickle.dumps(self.args)
