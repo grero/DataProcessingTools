@@ -72,6 +72,8 @@ def test_append():
 
     assert obj1.setidx == [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
     assert obj1.dirs == dirs
+    mylevels = obj1.getlevels()
+    assert mylevels == ["subject", "day", "session","array","channel","cell"]
 
     # test trial
     idx = obj.getindex("trial")
