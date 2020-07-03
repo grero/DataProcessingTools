@@ -8,6 +8,21 @@ import h5py
 import os
 
 
+class ExclusiveOptions():
+    def __init__(self, options, checked=None):
+        self.options = options
+        if checked is None:
+            self.checked = 0
+        else:
+            self.checked = checked
+
+    def select(self, option):
+        if option in self.options:
+            self.checked = self.options.index(option)
+
+    def selected(self):
+        return self.options[self.checked]
+
 class DPObject():
     argsList = []
     filename = ""
@@ -66,13 +81,19 @@ class DPObject():
             ax = plt.gca()
         replot = False
         for (k, v) in plotopts.items():
-            if isinstance(v, dict):
+            if isinstance(splotopts[k], ExclusiveOptions):
+                for (kk, vv) in v.items():
+                    if vv:
+                        splotopts[k].select(kk)
+                        replot = True
+                        break
+            elif isinstance(v, dict):
                 self.update_plotopts(v, ax, self.plotopts[k])
             else:
                 if v != splotopts[k]:
                     splotopts[k] = v
                     if k == "indexer":
-                        self.upate_index(v)
+                        self.update_index(v)
                     replot = True
 
         if replot:

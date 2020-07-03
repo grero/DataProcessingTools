@@ -14,16 +14,18 @@ class MyObj(DPT.objects.DPObject):
         DPT.objects.DPObject.__init__(self, *args, **kwargs)
         for i in range(len(self.dirs)):
             self.setidx.extend([i for j in range(3)])
-        self.plotopts = {"exponent": 1.0}
+        self.plotopts = {"exponent": 1.0,
+                         "color": DPT.objects.ExclusiveOptions(["blue","red"], 0)}
 
     def plot(self, i=None,  ax=None):
         if ax is None:
             ax = plt.gca()
         if not self.plotopts.get("overlay", False):
             ax.clear()
+        color = self.plotopts["color"].selected()
         x = np.array([0, 1, 2, 3])
         y = x**self.plotopts["exponent"]
-        ax.plot(x, y)
+        ax.plot(x, y, color=color)
 
 def test_plot():
     cwd = "Pancake/20130923/session01/array01/channel001/cell01"
@@ -43,6 +45,8 @@ def test_plot():
             obj.update_plotopts({"exponent": 2.0}, ax=ax)
             xy = ax.lines[0].get_data()
             assert np.allclose(xy[1], x**2.0)
+            obj.update_plotopts({"color": {"red": True}}, ax=ax)
+            assert ax.lines[0].get_color() == "red"
 
 def test_append():
     tempdir = tempfile.gettempdir()
