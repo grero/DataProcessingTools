@@ -8,6 +8,21 @@ import h5py
 import os
 
 
+class ExclusiveOptions():
+    def __init__(self, options, checked=None):
+        self.options = options
+        if checked is None:
+            self.checked = 0
+        else:
+            self.checked = checked
+
+    def select(self, option):
+        if option in self.options:
+            self.checked = self.options.index(option)
+
+    def selected(self):
+        return self.options[self.checked]
+
 class DPObject():
     argsList = []
     filename = ""
