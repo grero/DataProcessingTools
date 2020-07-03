@@ -72,12 +72,14 @@ class Raster(DPObject):
 
         self.trialLabels = np.concatenate((self.trialLabels, raster.trialLabels))
 
-    def plot(self, idx=None, ax=None, overlay=False):
+    def plot(self, i=None, ax=None, overlay=False):
         if ax is None:
             ax = gca()
         if not overlay:
             ax.clear()
-        if idx is None:
+        if i is None:
             # plot everything
-            idx = range(len(self.spiketimes))
-        ax.plot(self.spiketimes[idx], self.trialidx[idx], '.')
+            pidx = range(len(self.spiketimes))
+        else:
+            pidx = self.indexer(i)
+        ax.plot(self.spiketimes[pidx], self.trialidx[pidx], '.')
