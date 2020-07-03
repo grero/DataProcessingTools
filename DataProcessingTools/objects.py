@@ -108,6 +108,20 @@ class DPObject():
         """
         return max(0, min(index, self.data.shape[0]-1))
 
+    def getlevels(self):
+        """
+        Return a list of levels that this object understands
+        """
+        _levels = []
+        for d in self.dirs:
+            for l in levels.levels:
+                ln = levels.get_level_name(l, d)
+                if ln:
+                    if l not in _levels:
+                        _levels.append(l)
+
+        return _levels
+
     def getindex(self, level=None):
         """
         Return an index into this object for the requested level.
