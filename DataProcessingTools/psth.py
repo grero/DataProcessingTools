@@ -21,6 +21,7 @@ class PSTH(DPObject):
         Return a PSTH object using the specified bins
         """
         DPObject.__init__(self, *args, **kwargs)
+        self.indexer = self.getindex(self.level)
 
     def create(self, *args, **kwargs):
         saveLevel = kwargs.get("saveLevel", 1)
@@ -73,16 +74,17 @@ class PSTH(DPObject):
         self.ntrials = self.ntrials + psth.ntrials
 
     def plot(self, i=None, ax=None, overlay=False):
-        if i is None:
-            i = range(len(self.trial_labels))
-
         self.current_idx = i
+        if i is None:
+            pidx = range(len(self.trialLabels))
+        else:
+            pidx = self.indexer(i)
         if ax is None:
             ax = gca()
         if not overlay:
             ax.clear()
-        trialLabels = self.trialLabels[i]
-        data = self.data[i, :]
+        trialLabels = self.trialLabels[pidx]
+        data = self.data[pidx, :]
         labels = np.unique(trialLabels)
         if self.plotopts["group_by_label"]:
             for li in range(len(labels)):
