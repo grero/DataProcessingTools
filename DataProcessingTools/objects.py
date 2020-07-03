@@ -11,6 +11,7 @@ import os
 class DPObject():
     argsList = []
     filename = ""
+    level = None
 
     def __init__(self, *args, **kwargs):
         self.dirs = [os.getcwd()]
@@ -18,7 +19,8 @@ class DPObject():
         if normpath:
             self.dirs = [levels.normpath(d) for d in self.dirs]
         self.setidx = []
-        self.plotopts = {}
+        self.plotopts = {"indexer": self.level}
+        self.indexer = self.getindex(self.level)
         self.current_idx = None
         self.args = {}
         # process positional arguments
@@ -77,9 +79,6 @@ class DPObject():
     def __add__(self, obj):
         pass
 
-    def level(self):
-        pass
-
     def update_idx(self, index):
         """
         Return `index` if it is valid for the current object
@@ -91,7 +90,8 @@ class DPObject():
         Return an index into this object for the requested level.
         """
         if level is None:
-            return lambda i: None
+            return lambda i: np.where(np.array(self.setidx)==i)[0]
+
         elif level == "trial":
             # `trial` is just a catch all for the lowest level
             return lambda i: [i] if 0 <= i < len(self.setidx) else []
@@ -114,6 +114,9 @@ class DPObject():
             return np.where(idx == i)[0]
 
         return func
+
+    def update_index(self, level):
+        self.indexer = self.getindex(level)
 
     def append(self, obj):
         """

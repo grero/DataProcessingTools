@@ -100,15 +100,16 @@ def test_load():
             assert np.allclose(psth2.args["bins"], psth3.args["bins"])
 
         raster.append(raster2)
-        cellidx = raster.getindex("cell")
-        assert len(cellidx(1)) == len(raster2.setidx)
-        raster.plot(cellidx(0))
+        raster.update_index("cell")
+        assert len(raster.indexer(1)) == len(raster2.setidx)
+        raster.plot(0)
         xy = plt.gca().lines[0].get_data()
+        cellidx = raster.indexer
         assert np.allclose(xy[1], raster.trialidx[cellidx(0)])
         psth.append(psth2)
-        cellidx = psth.getindex("cell")
-        assert len(cellidx(1)) == len(psth2.setidx)
-        psth.plot(cellidx(0))
+        psth.update_index("cell")
+        assert len(psth.indexer(1)) == len(psth2.setidx)
+        psth.plot(0)
         assert len(plt.gca().lines) == 1
         os.remove(os.path.join(pth, "cell01", "unit.mat"))
         os.remove(os.path.join(pth, "cell02", "unit.mat"))
