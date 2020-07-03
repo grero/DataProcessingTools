@@ -115,6 +115,9 @@ class DPObject():
 
         return func
 
+    def update_index(self, level):
+        self.indexer = self.getindex(level)
+
     def append(self, obj):
         """
         Appends the data of `obj` to this object.
