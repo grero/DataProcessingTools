@@ -19,7 +19,8 @@ class DPObject():
         if normpath:
             self.dirs = [levels.normpath(d) for d in self.dirs]
         self.setidx = []
-        self.plotopts = {}
+        self.plotopts = {"indexer": self.level}
+        self.indexer = self.getindex(self.level)
         self.current_idx = None
         self.args = {}
         # process positional arguments
@@ -76,9 +77,6 @@ class DPObject():
             self.plot(self.current_idx, ax=ax)
 
     def __add__(self, obj):
-        pass
-
-    def level(self):
         pass
 
     def update_idx(self, index):
