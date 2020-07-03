@@ -90,7 +90,8 @@ class DPObject():
         Return an index into this object for the requested level.
         """
         if level is None:
-            return lambda i: None
+            return lambda i: np.where(np.array(self.setidx)==i)[0]
+
         elif level == "trial":
             # `trial` is just a catch all for the lowest level
             return lambda i: [i] if 0 <= i < len(self.setidx) else []
