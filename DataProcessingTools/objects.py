@@ -81,13 +81,19 @@ class DPObject():
             ax = plt.gca()
         replot = False
         for (k, v) in plotopts.items():
-            if isinstance(v, dict):
+            if isinstance(splotopts[k], ExclusiveOptions):
+                for (kk, vv) in v.items():
+                    if vv:
+                        splotopts[k].select(kk)
+                        replot = True
+                        break
+            elif isinstance(v, dict):
                 self.update_plotopts(v, ax, self.plotopts[k])
             else:
                 if v != splotopts[k]:
                     splotopts[k] = v
                     if k == "indexer":
-                        self.upate_index(v)
+                        self.update_index(v)
                     replot = True
 
         if replot:
