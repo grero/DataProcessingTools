@@ -71,6 +71,8 @@ class DPObject():
             else:
                 if v != splotopts[k]:
                     splotopts[k] = v
+                    if k == "indexer":
+                        self.upate_index(v)
                     replot = True
 
         if replot:
