@@ -157,7 +157,7 @@ class DPObject():
 
     def hash(self):
         s = pickle.dumps(self.args)
-        return hashlib.md5(s).hexdigest()
+        return hashlib.md5(s).hexdigest()[:4]
 
 class DPObjects():
     def __init__(self, objects):
