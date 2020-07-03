@@ -15,6 +15,7 @@ class PSTH(DPObject):
     """
     filename = "psth.hkl"
     argsList = ["bins", ("windowSize", 1)]
+    level = "cell"
 
     def __init__(self, *args, **kwargs):
         """

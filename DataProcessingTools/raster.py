@@ -12,6 +12,7 @@ class Raster(DPObject):
     """
     filename = "raster.hkl"
     argsList = ["tmin", "tmax", "trialEvent", "trialType", "sortBy"]
+    level = "cell"
 
     def __init__(self, *args, **kwargs):
         DPObject.__init__(self, *args, **kwargs)
