@@ -3,7 +3,7 @@ import matplotlib.pylab as plt
 import pickle
 import hickle
 import hashlib
-from . import levels
+from . import levels, misc
 import h5py
 import os
 
@@ -216,3 +216,19 @@ class DPObjects():
     def plot(self, i, *args, **kwargs):
         j = self.update_idx(i)
         return self.objects[j].plot(*args, **kwargs)
+
+
+def processDirs(dirs, objtype, *args, **kwargs):
+    """
+    Instantiates an object of type `objtype` in each directory in `dirs`,
+    concatenating them into a single object that is then returned
+    """
+    with misc.CWD(dirs[0]):
+        obj = objtype(*args, **kwargs)
+
+    for d in dirs[1:]:
+        with misc.CWD(d):
+            obj1 = objtype(*args, **kwargs)
+            obj.append(obj1)
+
+    return obj
