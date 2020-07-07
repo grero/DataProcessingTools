@@ -1,5 +1,6 @@
 import os
 import glob
+import re
 
 levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
 level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel[0-9]*", "cell[0-9]*"]
@@ -59,9 +60,22 @@ def get_level_dirs(target_level, cwd=None):
     """
     if cwd is None:
         cwd = os.getcwd()
-    this_level = level(cwd)
-    this_idx = levels.index(this_level)
     target_idx = levels.index(target_level)
+    this_level = level(cwd)
+    if this_level in levels:
+        this_idx = levels.index(this_level)
+    else:
+        # we are outside the hierarchy; use os.walk
+        dirs = []
+        pattern = re.compile(level_patterns_s[target_idx])
+        for dpath, dnames, fnames in os.walk(cwd):
+            for _dnames in dnames:
+                m = pattern.match(_dnames)
+                if m:
+                    dirs.append(os.path.join(dpath, _dnames))
+        dirs.sort()
+        return dirs
+
     if target_idx == this_idx:
         dirs = [os.path.join(cwd, ".")]
     elif target_idx < this_idx:
