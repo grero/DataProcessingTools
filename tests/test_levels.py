@@ -14,25 +14,34 @@ def test_level():
     rr = DPT.levels.resolve_level("channel", cwd)
     assert rr == "."
 
-    tdir = tempfile.gettempdir()
-    cwd = os.getcwd()
-    os.chdir(tdir)
-    dir1 = "Pancake/20130923/session01/array02/channel033"
-    dir2 = "Pancake/20130923/session01/array02/channel034"
-    for d in [dir1, dir2]:
-        if not os.path.isdir(d):
-            os.makedirs(d)
-    dirs = DPT.levels.get_level_dirs("channel", "Pancake/20130923/session01/array02")
-    assert dirs[0] == "Pancake/20130923/session01/array02/channel033"
-    assert dirs[1] == "Pancake/20130923/session01/array02/channel034"
+    tdir = os.path.join(tempfile.gettempdir(), "levels")
+    if not os.path.isdir(tdir):
+        os.makedirs(tdir)
 
-    dirs = DPT.levels.get_level_dirs("session", "Pancake/20130923/session01/array02")
-    assert dirs[0] == "Pancake/20130923/session01/array02/./../../session01"
+    with DPT.misc.CWD(tdir):
+        dir1 = "Pancake/20130923/session01/array02/channel033"
+        dir2 = "Pancake/20130923/session01/array02/channel034"
+        for d in [dir1, dir2]:
+            if not os.path.isdir(d):
+                os.makedirs(d)
+        dirs = DPT.levels.get_level_dirs("channel", "Pancake/20130923/session01/array02")
+        assert dirs[0] == "Pancake/20130923/session01/array02/channel033"
+        assert dirs[1] == "Pancake/20130923/session01/array02/channel034"
 
-    dirs = DPT.levels.get_level_dirs("array", "Pancake/20130923/session01/array02")
-    assert dirs[0] == "Pancake/20130923/session01/array02/."
+        dirs = DPT.levels.get_level_dirs("session", "Pancake/20130923/session01/array02")
+        assert dirs[0] == "Pancake/20130923/session01/array02/./../../session01"
 
-    os.chdir(cwd)
+        dirs = DPT.levels.get_level_dirs("array", "Pancake/20130923/session01/array02")
+        assert dirs[0] == "Pancake/20130923/session01/array02/."
+
+        chdirs = DPT.levels.get_level_dirs("channel")
+        assert len(chdirs) == 2
+        assert DPT.levels.normpath(chdirs[0]) == dir1
+        assert DPT.levels.normpath(chdirs[1]) == dir2
+
+        arraydirs = DPT.levels.get_level_dirs("array")
+        assert len(arraydirs) == 1
+        assert DPT.levels.normpath(arraydirs[0]) == "Pancake/20130923/session01/array02"
 
     dir1 = "Pancake/20130923/session01/array02/channel033"
     ln = DPT.levels.get_level_name("session", dir1)

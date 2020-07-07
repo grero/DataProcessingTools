@@ -55,6 +55,10 @@ def test_append():
             "Pancake/20130923/session01/array02/channel033/cell01",
             "Pancake/20130923/session01/array02/channel034/cell01"]
 
+    tempdir = os.path.join(tempdir, "data")
+    if not os.path.isdir(tempdir):
+        os.makedirs(tempdir)
+
     with DPT.misc.CWD(tempdir):
         for d in dirs:
             if not os.path.isdir(d):
@@ -72,11 +76,14 @@ def test_append():
 
         # do the same thing with processDirs
         obj3 = DPT.objects.processDirs(dirs, MyObj, [0.1, 0.2, 0.3])
+        obj4 = DPT.objects.processDirs(None, MyObj, [0.1, 0.2, 0.3])
     assert obj1.setidx == [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
     assert obj3.setidx == obj1.setidx
+    assert obj4.setidx == obj3.setidx
 
     assert obj1.dirs == dirs
     assert obj1.dirs == obj3.dirs
+    assert obj1.dirs == obj4.dirs
     mylevels = obj1.getlevels()
     assert mylevels == ["subject", "day", "session","array","channel","cell"]
 

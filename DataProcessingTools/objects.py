@@ -222,7 +222,12 @@ def processDirs(dirs, objtype, *args, **kwargs):
     """
     Instantiates an object of type `objtype` in each directory in `dirs`,
     concatenating them into a single object that is then returned
+
+    If `dirs` is `None`, all directories under the current directory will be visited.
     """
+    if dirs is None:
+        dirs = levels.get_level_dirs(objtype.level)
+
     with misc.CWD(dirs[0]):
         obj = objtype(*args, **kwargs)
 
