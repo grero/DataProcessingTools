@@ -29,6 +29,8 @@ class PSTH(DPObject):
         bins = self.args["bins"]
 
         # attempt to load from the current directory
+        kwargs["saveLevel"] = kwargs.get("saveLevel", 1) - 1
+        kwargs["redoLevel"] = kwargs.get("redoLevel", 1) - 1
         raster = Raster(bins[0], bins[-1], **kwargs)
         spiketimes = raster.spiketimes
         trialidx = raster.trialidx
@@ -60,9 +62,6 @@ class PSTH(DPObject):
         self.setidx = [0 for i in range(self.ntrials)]
 
         self.plotopts = {"group_by_label": True}
-
-        if saveLevel > 0:
-            self.save()
 
     def append(self, psth):
         if not (self.bins == psth.bins).all():

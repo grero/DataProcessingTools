@@ -12,6 +12,7 @@ class Spiketrain(DPObject):
     filename = "unit.mat"
 
     def __init__(self, *args, **kwargs):
+        kwargs["redoLevel"] = 0
         DPObject.__init__(self, *args, **kwargs)
         # always load since we do not create spike trains here.
         if os.path.isfile(self.filename):
