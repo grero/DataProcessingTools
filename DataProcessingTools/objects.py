@@ -56,12 +56,16 @@ class DPObject():
             self.args[k] = kwargs.get(k, v)
 
         redoLevel = kwargs.get("redoLevel", 0)
+        saveLevel = kwargs.get("saveLevel", 0)
         fname = self.get_filename()
         if redoLevel == 0 and os.path.isfile(fname):
             self.load(fname)
         else:
             # create object
             self.create(*args, **kwargs)
+            if saveLevel > 0:
+                self.save()
+
 
     def create(self, *args, **kwargs):
         pass
