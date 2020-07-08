@@ -61,9 +61,6 @@ class PSTH(DPObject):
 
         self.plotopts = {"group_by_label": True}
 
-        if saveLevel > 0:
-            self.save()
-
     def append(self, psth):
         if not (self.bins == psth.bins).all():
             ValueError("Incompatible bins")
