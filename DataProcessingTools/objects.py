@@ -201,7 +201,12 @@ class DPObject():
         hickle.dump(tosave, fname, mode="w")
 
     def hash(self):
-        s = pickle.dumps(self.args)
+        keys = {}
+        func = lambda s: any(x.isupper() for x in s)
+        for key in self.args.keys():
+            if func(key):
+                keys[key] = self.args[key]
+        s = pickle.dumps(keys)
         return hashlib.md5(s).hexdigest()[:4]
 
 class DPObjects():
