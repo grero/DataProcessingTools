@@ -202,9 +202,8 @@ class DPObject():
 
     def hash(self):
         keys = {}
-        func = lambda s: any(x.isupper() for x in s)
         for key in self.args.keys():
-            if func(key):
+            if key[0].isupper():
                 keys[key] = self.args[key]
         s = pickle.dumps(keys)
         return hashlib.md5(s).hexdigest()[:4]
