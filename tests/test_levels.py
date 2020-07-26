@@ -4,7 +4,7 @@ import os
 
 
 def test_level():
-    ll = DPT.level("sessioneye")
+    ll = DPT.levels.level("sessioneye")
     assert ll == "session"
 
     cwd = "Pancake/20130923/session01/array02/channel033"
