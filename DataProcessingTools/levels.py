@@ -5,16 +5,23 @@ import re
 levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
 level_patterns_s = ["([a-zA-Z]+)", "([a-zA-Z]+)", "([0-9]+)", "(session)([a-z0-9]+)", "(array)([0-9]+)", "(channel)([0-9]+)", "(cell)([0-9]+)"]
 
+
 def get_numbers(ss):
     return "".join(filter(str.isdigit, ss))
+
+
+def get_id(ss):
+    ll = level(ss)
+    return ss.replace(ll, "")
+
 
 shortnames = {"subjects": lambda x: "",
               "subject": lambda x: x[0],
               "day": lambda x: x,
-              "session": lambda x: "s{0}".format(get_numbers(x)),
-              "array": lambda x: "a{0}".format(get_numbers(x)),
-              "channel": lambda x: "g{0}".format(get_numbers(x)),
-              "cell": lambda x: "c{0}".format(get_numbers(x))}
+              "session": lambda x: "s{0}".format(get_id(x)),
+              "array": lambda x: "a{0}".format(get_id(x)),
+              "channel": lambda x: "g{0}".format(get_id(x)),
+              "cell": lambda x: "c{0}".format(get_id(x))}
 
 
 def get_shortname(level, cwd =None):
