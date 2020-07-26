@@ -3,7 +3,7 @@ import glob
 import re
 
 levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
-level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel[0-9]*", "cell[0-9]*"]
+level_patterns_s = ["([a-zA-Z]+)", "([a-zA-Z]+)", "([0-9]+)", "(session)([a-z0-9]+)", "(array)([0-9]+)", "(channel)([0-9]+)", "(cell)([0-9]+)"]
 
 def get_numbers(ss):
     return "".join(filter(str.isdigit, ss))
@@ -27,13 +27,17 @@ def level(cwd=None):
     """
     Return the level corresponding to the folder `cwd`.
     """
-    pp = cwd.split(os.sep)[-1]
+    leaf = cwd.split(os.sep)[-1]
     ll = ''
-    if pp.isdigit():
+    if leaf.isdigit():
         ll = 'day'
     else:
-        numstr = [str(i) for i in range(10)]
-        ll = pp.strip(''.join(numstr))
+        for pattern in level_patterns_s[::-1]:
+            pp = re.compile(pattern)
+            m = pp.match(leaf)
+            if m is not None:
+                ll = m.groups()[0]
+                break
     return ll
 
 
