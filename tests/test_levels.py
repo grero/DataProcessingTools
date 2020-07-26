@@ -71,3 +71,6 @@ def test_shortnames():
     npth = DPT.levels.normpath(pth)
     assert npth == "Pancake/20230923/session01"
 
+    aa = DPT.levels.get_shortname("session", "sessioneye")
+    assert aa == "seye"
+
