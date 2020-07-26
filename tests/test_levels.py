@@ -74,3 +74,5 @@ def test_shortnames():
     aa = DPT.levels.get_shortname("session", "sessioneye")
     assert aa == "seye"
 
+    aa = DPT.levels.get_numbers("session01")
+    assert aa == "01"
