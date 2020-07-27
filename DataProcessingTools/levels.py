@@ -8,6 +8,19 @@ levels = []
 level_patterns_s = []
 
 
+def create_config(levels, patterns, fname="config.json"):
+    """
+    Create a JSON config file with the specified `levels` and
+    corresponding level patterns.
+    """
+    Q = {}
+    for (ii, (l, p)) in enumerate(zip(levels, patterns)):
+        Q[l] = {"pattern": p, "order": ii}
+
+    with open(fname, "w") as ff:
+        json.dump(Q, ff)
+
+
 def update_config(fname="config.json"):
     """
     Update the hierarchy with the level information in the JSON encoded file
