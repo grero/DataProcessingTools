@@ -102,3 +102,21 @@ the default config file looks like:
 The main keys, e.g. 'subjects', 'subject', etc, represent the names of the different levels, while the `pattern` key within each level
 specifies a regular expression for parsing that particular level. For example, the pattern for the `session` level is `(session)([a-z0-9]+)`,
 which will match any string starting witn "session". Whatever comes after, e.g. "session01" or "sessioneye", will be used as an identifier for that session. Finally, the `order` key specifies the order of the level in the hierarchy. In the example, the level `subjects` is at the top of the hierarchy, i.e. it anchors all the other levels, while the level `cell` is at the bottom.
+
+To update the hierarchy, use the `update_config` function:
+
+```python
+import DataProcessingTools as DPT
+DPT.update_config(fname="config.json")
+```
+
+To create a new config, use the `create_config` function:
+
+```python
+import DataProcessingTools as DPT
+DPT.create_config(levels, level_patterns, fname="config.json")
+```
+
+Here, `levels` should be names of the levels (listed in order from top to bottom), and `level_pattern` is the corresponding regular expressions that parses each level. One can then call `update_config` with the new config file to update the hierarchy configuration.
+
+```
