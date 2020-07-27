@@ -103,6 +103,8 @@ The main keys, e.g. 'subjects', 'subject', etc, represent the names of the diffe
 specifies a regular expression for parsing that particular level. For example, the pattern for the `session` level is `(session)([a-z0-9]+)`,
 which will match any string starting witn "session". Whatever comes after, e.g. "session01" or "sessioneye", will be used as an identifier for that session. Finally, the `order` key specifies the order of the level in the hierarchy. In the example, the level `subjects` is at the top of the hierarchy, i.e. it anchors all the other levels, while the level `cell` is at the bottom.
 
+A note about regular expressions used in `pattern`. These follow normal regular expression rules, i.e. square brackets [] reprent sets, and "+" means at least instance of the set is required. Also, the round parantheses indicate separate groups of the expression. So, the pattern `"(session)([a-z0-9]+)"` means look for a pattern startin with "session", and ends with at least one letter or digit. Group the expression into two groups; the first is simply the word "session", and the second is the identifier for that session.
+
 To update the hierarchy, use the `update_config` function:
 
 ```python
