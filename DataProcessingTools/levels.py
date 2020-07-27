@@ -1,9 +1,32 @@
 import os
 import glob
 import re
+import json
+import numpy as np
 
-levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
-level_patterns_s = ["([a-zA-Z]+)", "([a-zA-Z]+)", "([0-9]+)", "(session)([a-z0-9]+)", "(array)([0-9]+)", "(channel)([0-9]+)", "(cell)([0-9]+)"]
+levels = []
+level_patterns_s = []
+
+
+def update_config(fname="config.json"):
+    """
+    Update the hierarchy with the level information in the JSON encoded file
+    `fname`.
+    """
+    global levels
+    global level_patterns_s
+    cdata = json.load(open(fname, "r"))
+    order = [cdata[k]["order"] for k in cdata.keys()]
+    sidx = np.argsort(order)
+    levels = list(cdata.keys())
+    levels = [levels[ii] for ii in sidx]
+    level_patterns = [cdata[k]["pattern"] for k in cdata.keys()]
+    level_patterns_s = [level_patterns[ii] for ii in sidx]
+
+
+if not levels:
+    pth, ff = os.path.split(os.path.abspath(__file__))
+    update_config(os.path.join(pth, "config.json"))
 
 
 def get_numbers(ss):
