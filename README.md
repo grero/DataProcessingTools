@@ -107,14 +107,14 @@ To update the hierarchy, use the `update_config` function:
 
 ```python
 import DataProcessingTools as DPT
-DPT.update_config(fname="config.json")
+DPT.levels.update_config(fname="config.json")
 ```
 
 To create a new config, use the `create_config` function:
 
 ```python
 import DataProcessingTools as DPT
-DPT.create_config(levels, level_patterns, fname="config.json")
+DPT.levels.create_config(levels, level_patterns, fname="config.json")
 ```
 
 Here, `levels` should be names of the levels (listed in order from top to bottom), and `level_pattern` is the corresponding regular expressions that parses each level. One can then call `update_config` with the new config file to update the hierarchy configuration.
