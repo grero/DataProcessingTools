@@ -3,18 +3,25 @@ import glob
 import re
 
 levels = ['subjects', 'subject', 'day', 'session', 'array', 'channel','cell']
-level_patterns_s = ["*", "*", "[0-9]*", "session[0-9]*", "array[0-9]*", "channel[0-9]*", "cell[0-9]*"]
+level_patterns_s = ["([a-zA-Z]+)", "([a-zA-Z]+)", "([0-9]+)", "(session)([a-z0-9]+)", "(array)([0-9]+)", "(channel)([0-9]+)", "(cell)([0-9]+)"]
+
 
 def get_numbers(ss):
     return "".join(filter(str.isdigit, ss))
 
+
+def get_id(ss):
+    ll = level(ss)
+    return ss.replace(ll, "")
+
+
 shortnames = {"subjects": lambda x: "",
               "subject": lambda x: x[0],
               "day": lambda x: x,
-              "session": lambda x: "s{0}".format(get_numbers(x)),
-              "array": lambda x: "a{0}".format(get_numbers(x)),
-              "channel": lambda x: "g{0}".format(get_numbers(x)),
-              "cell": lambda x: "c{0}".format(get_numbers(x))}
+              "session": lambda x: "s{0}".format(get_id(x)),
+              "array": lambda x: "a{0}".format(get_id(x)),
+              "channel": lambda x: "g{0}".format(get_id(x)),
+              "cell": lambda x: "c{0}".format(get_id(x))}
 
 
 def get_shortname(level, cwd =None):
@@ -27,13 +34,17 @@ def level(cwd=None):
     """
     Return the level corresponding to the folder `cwd`.
     """
-    pp = cwd.split(os.sep)[-1]
+    leaf = cwd.split(os.sep)[-1]
     ll = ''
-    if pp.isdigit():
+    if leaf.isdigit():
         ll = 'day'
     else:
-        numstr = [str(i) for i in range(10)]
-        ll = pp.strip(''.join(numstr))
+        for pattern in level_patterns_s[::-1]:
+            pp = re.compile(pattern)
+            m = pp.match(leaf)
+            if m is not None:
+                ll = m.groups()[0]
+                break
     return ll
 
 
@@ -75,16 +86,17 @@ def get_level_dirs(target_level, cwd=None):
                     dirs.append(os.path.join(dpath, _dnames))
         dirs.sort()
         return dirs
-
     if target_idx == this_idx:
         dirs = [os.path.join(cwd, ".")]
     elif target_idx < this_idx:
         rel_path = resolve_level(target_level, cwd)
         pattern = level_patterns_s[target_idx]
+        pattern = pattern.replace("(", "").replace(")", "").replace("+", "*")
         gpattern = os.path.join(cwd, rel_path, "..", pattern)
         dirs = sorted(glob.glob(gpattern))
     else:
         patterns = level_patterns_s[this_idx+1:target_idx+1]
+        patterns = [pattern.replace("(", "").replace(")", "").replace("+", "*") for pattern in patterns]
         dirs = sorted(glob.glob(os.path.join(cwd, *patterns)))
     return dirs
 

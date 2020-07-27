@@ -4,6 +4,9 @@ import os
 
 
 def test_level():
+    ll = DPT.levels.level("sessioneye")
+    assert ll == "session"
+
     cwd = "Pancake/20130923/session01/array02/channel033"
     ll = DPT.levels.level(cwd)
     assert ll == "channel"
@@ -68,3 +71,8 @@ def test_shortnames():
     npth = DPT.levels.normpath(pth)
     assert npth == "Pancake/20230923/session01"
 
+    aa = DPT.levels.get_shortname("session", "sessioneye")
+    assert aa == "seye"
+
+    aa = DPT.levels.get_numbers("session01")
+    assert aa == "01"
