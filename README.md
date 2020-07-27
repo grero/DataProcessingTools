@@ -82,3 +82,23 @@ for cell in cells[1:]:
 
 app = PanGUI.create_window([raster, psth], cols=1, indexer="cell")
 ```
+
+## Custom hierarchy
+
+It also possible to customize the hierarchy that DPT understands. This is done with a JSON coded config file. This is what 
+the default config file looks like:
+
+```json
+{"subjects": {"pattern": "([a-zA-Z]+)","order":0},
+  "subject": {"pattern": "([a-zA-Z]+)", "order": 1},
+  "day": {"pattern": "([0-9]+)", "order": 2},
+  "session": {"pattern": "(session)([a-z0-9]+)","order": 3},
+  "array": {"pattern": "(array)([0-9]+)", "order": 4},
+  "channel": {"pattern": "(channel)([0-9]+)", "order": 5},
+  "cell": {"pattern": "(cell)([0-9]+)", "order": 6}
+}
+```
+
+The main keys, e.g. 'subjects', 'subject', etc, represent the names of the different levels, while the `pattern` key within each level
+specifies a regular expression for parsing that particular level. For example, the pattern for the `session` level is `(session)([a-z0-9]+)`,
+which will match any string starting witn "session". Whatever comes after, e.g. "session01" or "sessioneye", will be used as an identifier for that session. Finally, the `order` key specifies the order of the level in the hierarchy. In the example, the level `subjects` at the top of the hierarchy, i.e. it anchors all the other levels, while the level `cell` is at the bottom.
