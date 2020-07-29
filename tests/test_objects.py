@@ -131,7 +131,10 @@ def test_empty():
         argsList = ["tmin", "tmax"]
         filename = "test3.mat"
 
-    obj = MyObj3(-0.1, 1.0, normpath=False, saveLevel=1)
-    obj.dirs = []
+        def create(self, *args, **kwargs):
+            self.dirs = []
+            self.setidx = []
+
+    obj = MyObj3(1.0, 0.1, normpath=False)
     # test that no object was saved
     assert not os.path.isfile("test3.mat")
