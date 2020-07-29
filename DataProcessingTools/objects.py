@@ -63,9 +63,8 @@ class DPObject():
         else:
             # create object
             self.create(*args, **kwargs)
-            if saveLevel > 0:
+            if self.dirs and saveLevel > 0:
                 self.save()
-
 
     def create(self, *args, **kwargs):
         pass
