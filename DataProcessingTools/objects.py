@@ -29,14 +29,6 @@ class DPObject():
     level = None
 
     def __init__(self, *args, **kwargs):
-        self.dirs = [os.getcwd()]
-        normpath = kwargs.get("normpath", True)
-        if normpath:
-            self.dirs = [levels.normpath(d) for d in self.dirs]
-        self.setidx = []
-        self.plotopts = {"indexer": self.level}
-        self.indexer = self.getindex(self.level)
-        self.current_idx = None
         self.args = {}
         # process positional arguments
         # TODO: We need to somehow consume these, ie. remove the processed ones
@@ -67,7 +59,14 @@ class DPObject():
                 self.save()
 
     def create(self, *args, **kwargs):
-        pass
+        self.dirs = [os.getcwd()]
+        normpath = kwargs.get("normpath", True)
+        if normpath:
+            self.dirs = [levels.normpath(d) for d in self.dirs]
+        self.setidx = []
+        self.plotopts = {"indexer": self.level}
+        self.indexer = self.getindex(self.level)
+        self.current_idx = None
 
     def plot(self, i, ax=None):
         pass
