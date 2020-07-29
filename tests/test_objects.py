@@ -125,3 +125,13 @@ def test_object():
     assert obj.args["tmin"] == -0.1
     assert obj.args["tmax"] == 1.0
 
+
+def test_empty():
+    class MyObj3(DPT.objects.DPObject):
+        argsList = ["tmin", "tmax"]
+        filename = "test3.mat"
+
+    obj = MyObj3(-0.1, 1.0, normpath=False, saveLevel=1)
+    obj.dirs = []
+    # test that no object was saved
+    assert not os.path.isfile("test3.mat")
