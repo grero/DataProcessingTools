@@ -50,13 +50,20 @@ class DPObject():
         redoLevel = kwargs.get("redoLevel", 0)
         saveLevel = kwargs.get("saveLevel", 0)
         fname = self.get_filename()
+        verbose = kwargs.get("verbose", 1)
         if redoLevel == 0 and os.path.isfile(fname):
             self.load(fname)
+            if verbose > 0:
+                print("Object loaded from file {0}".format(fname))
         else:
             # create object
             self.create(*args, **kwargs)
+            if verbose > 0:
+                print("Object created")
             if self.dirs and saveLevel > 0:
                 self.save()
+                if verbose > 0:
+                    print("Object saved to file {0}".format(fname))
 
     def create(self, *args, **kwargs):
         self.dirs = [os.getcwd()]
