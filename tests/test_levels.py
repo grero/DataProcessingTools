@@ -3,6 +3,17 @@ import tempfile
 import os
 
 
+def test_config():
+    tdir = tempfile.gettempdir()
+    with DPT.misc.CWD(tdir):
+        levels = DPT.levels.levels
+        level_patterns = DPT.levels.level_patterns_s
+        DPT.levels.create_config(levels, level_patterns, "config.json")
+        DPT.levels.update_config("config.json")
+        assert DPT.levels.levels == levels
+        assert DPT.levels.level_patterns_s == level_patterns
+
+
 def test_level():
     ll = DPT.levels.level("sessioneye")
     assert ll == "session"
