@@ -58,22 +58,23 @@ class DPObject():
         else:
             # create object
             self.create(*args, **kwargs)
-            if verbose > 0:
-                print("Object created")
             if self.dirs and saveLevel > 0:
                 self.save()
                 if verbose > 0:
                     print("Object saved to file {0}".format(fname))
 
     def create(self, *args, **kwargs):
-        self.dirs = [os.getcwd()]
-        normpath = kwargs.get("normpath", True)
-        if normpath:
-            self.dirs = [levels.normpath(d) for d in self.dirs]
-        self.setidx = []
-        self.plotopts = {"indexer": self.level}
-        self.indexer = self.getindex(self.level)
-        self.current_idx = None
+        self.dirs = kwargs.get("dirs", [os.getcwd()])
+        if self.dirs:
+            normpath = kwargs.get("normpath", True)
+            if normpath:
+                self.dirs = [levels.normpath(d) for d in self.dirs]
+            self.setidx = []
+            self.plotopts = {"indexer": self.level}
+            self.indexer = self.getindex(self.level)
+            self.current_idx = None
+            if kwargs.get("verbose", 1):
+                print("Object created")
 
     def plot(self, i, ax=None):
         pass
