@@ -163,11 +163,12 @@ class DPObject():
         """
         Appends the data of `obj` to this object.
         """
-        mx = self.setidx[-1]+1
-        for s in obj.setidx:
-            self.setidx.append(s+mx)
-        for d in obj.dirs:
-            self.dirs.append(d)
+        if self.setidx:
+            mx = self.setidx[-1]+1
+            for s in obj.setidx:
+                self.setidx.append(s+mx)
+            for d in obj.dirs:
+                self.dirs.append(d)
 
     def get_filename(self):
         """
