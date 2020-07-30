@@ -239,12 +239,19 @@ def processDirs(dirs, objtype, *args, **kwargs):
     if dirs is None:
         dirs = levels.get_level_dirs(objtype.level)
 
-    with misc.CWD(dirs[0]):
-        obj = objtype(*args, **kwargs)
+    ii = 0
+    while ii < len(dirs):
+        with misc.CWD(dirs[ii]):
+            obj = objtype(*args, **kwargs)
+            ii += 1
+            if obj.dirs:
+                break
 
-    for d in dirs[1:]:
-        with misc.CWD(d):
+    while ii < len(dirs):
+        with misc.CWD(dirs[ii]):
             obj1 = objtype(*args, **kwargs)
-            obj.append(obj1)
+            ii += 1
+            if obj1.dirs:
+                obj.append(obj1)
 
     return obj
