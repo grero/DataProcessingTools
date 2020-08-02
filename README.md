@@ -82,3 +82,43 @@ for cell in cells[1:]:
 
 app = PanGUI.create_window([raster, psth], cols=1, indexer="cell")
 ```
+
+## Custom hierarchy
+
+It also possible to customize the hierarchy that DPT understands. This is done with a JSON coded config file. This is what 
+the default config file looks like:
+
+```json
+{"subjects": {"pattern": "([a-zA-Z]+)","order":0},
+  "subject": {"pattern": "([a-zA-Z]+)", "order": 1},
+  "day": {"pattern": "([0-9]+)", "order": 2},
+  "session": {"pattern": "(session)([a-z0-9]+)","order": 3},
+  "array": {"pattern": "(array)([0-9]+)", "order": 4},
+  "channel": {"pattern": "(channel)([0-9]+)", "order": 5},
+  "cell": {"pattern": "(cell)([0-9]+)", "order": 6}
+}
+```
+
+The main keys, e.g. 'subjects', 'subject', etc, represent the names of the different levels, while the `pattern` key within each level
+specifies a regular expression for parsing that particular level. For example, the pattern for the `session` level is `(session)([a-z0-9]+)`,
+which will match any string starting witn "session". Whatever comes after, e.g. "session01" or "sessioneye", will be used as an identifier for that session. Finally, the `order` key specifies the order of the level in the hierarchy. In the example, the level `subjects` is at the top of the hierarchy, i.e. it anchors all the other levels, while the level `cell` is at the bottom.
+
+A note about regular expressions used in `pattern`. These follow normal regular expression rules, i.e. square brackets [] reprent sets, and "+" means at least instance of the set is required. Also, the round parantheses indicate separate groups of the expression. So, the pattern `"(session)([a-z0-9]+)"` means look for a pattern startin with "session", and ends with at least one letter or digit. Group the expression into two groups; the first is simply the word "session", and the second is the identifier for that session.
+
+To update the hierarchy, use the `update_config` function:
+
+```python
+import DataProcessingTools as DPT
+DPT.levels.update_config(fname="config.json")
+```
+
+To create a new config, use the `create_config` function:
+
+```python
+import DataProcessingTools as DPT
+DPT.levels.create_config(levels, level_patterns, fname="config.json")
+```
+
+Here, `levels` should be names of the levels (listed in order from top to bottom), and `level_pattern` is the corresponding regular expressions that parses each level. One can then call `update_config` with the new config file to update the hierarchy configuration.
+
+```

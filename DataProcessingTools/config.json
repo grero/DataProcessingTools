@@ -1,0 +1,8 @@
+{"subjects": {"pattern": "([a-zA-Z]+)","order":0},
+  "subject": {"pattern": "([a-zA-Z]+)", "order": 1},
+  "day": {"pattern": "([0-9]+)", "order": 2},
+  "session": {"pattern": "(session)([a-z0-9]+)","order": 3},
+  "array": {"pattern": "(array)([0-9]+)", "order": 4},
+  "channel": {"pattern": "(channel)([0-9]+)", "order": 5},
+  "cell": {"pattern": "(cell)([0-9]+)", "order": 6}
+}
