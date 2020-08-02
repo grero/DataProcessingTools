@@ -25,6 +25,7 @@ class PSTH(DPObject):
         self.indexer = self.getindex(self.level)
 
     def create(self, *args, **kwargs):
+        DPObject.create(self, *args, **kwargs)
         saveLevel = kwargs.get("saveLevel", 1)
         bins = self.args["bins"]
 

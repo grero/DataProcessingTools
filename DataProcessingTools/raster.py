@@ -18,6 +18,7 @@ class Raster(DPObject):
         DPObject.__init__(self, *args, **kwargs)
 
     def create(self, *args, **kwargs):
+        DPObject.create(self, *args, **kwargs)
         trials = get_trials()
         #TODO: This only works with correct trials for now
         rewardOnset, cidx, stimIdx = trials.get_timestamps("reward_on")

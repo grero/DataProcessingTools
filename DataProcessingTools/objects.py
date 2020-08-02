@@ -29,14 +29,6 @@ class DPObject():
     level = None
 
     def __init__(self, *args, **kwargs):
-        self.dirs = [os.getcwd()]
-        normpath = kwargs.get("normpath", True)
-        if normpath:
-            self.dirs = [levels.normpath(d) for d in self.dirs]
-        self.setidx = []
-        self.plotopts = {"indexer": self.level}
-        self.indexer = self.getindex(self.level)
-        self.current_idx = None
         self.args = {}
         # process positional arguments
         # TODO: We need to somehow consume these, ie. remove the processed ones
@@ -58,17 +50,31 @@ class DPObject():
         redoLevel = kwargs.get("redoLevel", 0)
         saveLevel = kwargs.get("saveLevel", 0)
         fname = self.get_filename()
+        verbose = kwargs.get("verbose", 1)
         if redoLevel == 0 and os.path.isfile(fname):
             self.load(fname)
+            if verbose > 0:
+                print("Object loaded from file {0}".format(fname))
         else:
             # create object
             self.create(*args, **kwargs)
-            if saveLevel > 0:
+            if self.dirs and saveLevel > 0:
                 self.save()
-
+                if verbose > 0:
+                    print("Object saved to file {0}".format(fname))
 
     def create(self, *args, **kwargs):
-        pass
+        self.dirs = kwargs.get("dirs", [os.getcwd()])
+        if self.dirs:
+            normpath = kwargs.get("normpath", True)
+            if normpath:
+                self.dirs = [levels.normpath(d) for d in self.dirs]
+            self.setidx = []
+            self.plotopts = {"indexer": self.level}
+            self.indexer = self.getindex(self.level)
+            self.current_idx = None
+            if kwargs.get("verbose", 1):
+                print("Object created")
 
     def plot(self, i, ax=None):
         pass
@@ -233,12 +239,19 @@ def processDirs(dirs, objtype, *args, **kwargs):
     if dirs is None:
         dirs = levels.get_level_dirs(objtype.level)
 
-    with misc.CWD(dirs[0]):
-        obj = objtype(*args, **kwargs)
+    ii = 0
+    while ii < len(dirs):
+        with misc.CWD(dirs[ii]):
+            obj = objtype(*args, **kwargs)
+            ii += 1
+            if obj.dirs:
+                break
 
-    for d in dirs[1:]:
-        with misc.CWD(d):
+    while ii < len(dirs):
+        with misc.CWD(dirs[ii]):
             obj1 = objtype(*args, **kwargs)
-            obj.append(obj1)
+            ii += 1
+            if obj1.dirs:
+                obj.append(obj1)
 
     return obj
