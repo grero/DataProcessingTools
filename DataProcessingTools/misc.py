@@ -14,17 +14,17 @@ class CWD(object):
     def __exit__(self, type, value, traceback):
         os.chdir(self.pwd)
 
-"""
-Calls `func` for every directory in `dirs`
-
-## Examples
-```python
-@processDirs(dirs)
-def createObj():
-    obj = Obj()
-```
-"""
 def processDirs(dirs):
+    """
+    Calls `func` for every directory in `dirs`
+
+    ## Examples
+    ```python
+    @processDirs(dirs)
+    def createObj():
+        obj = Obj()
+    ```
+    """
     def decorate_func(func):
         @functools.wraps(func)
         def wrapper_processDirs(*args,**kwargs):
