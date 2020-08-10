@@ -87,3 +87,25 @@ def test_shortnames():
 
     aa = DPT.levels.get_numbers("session01")
     assert aa == "01"
+
+def test_processLevel():
+    tdir = tempfile.gettempdir()
+    with DPT.misc.CWD(tdir):
+        if not os.path.isdir("data2"):
+            os.mkdir("data2")
+        with DPT.misc.CWD("data2"):
+            dir1 = "Pancake/20130923/session01/array02/channel033"
+            dir2 = "Pancake/20130923/session01/array02/channel034"
+            for d in [dir1, dir2]:
+                if not os.path.isdir(d):
+                    os.makedirs(d)
+
+            dirs, data = DPT.levels.processLevel("channel",
+                                                 "x = 1; y = 2; data.append([x,y])")
+
+            assert dirs[0] == dir1
+            assert dirs[1] == dir2
+            assert data == [[1, 2], [1, 2]]
+            for d in [dir1, dir2]:
+                os.removedirs(d)
+        os.rmdir("data2")

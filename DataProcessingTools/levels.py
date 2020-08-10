@@ -177,3 +177,23 @@ def normpath(cwd):
     this_idx = levels.index(this_level)
     parts = cwd.split(os.path.sep)
     return os.path.join(*parts[-this_idx:])
+
+
+def processLevel(level, cmd="", normalize=True):
+    """
+    Evaluate the code in `cmd` for each directory corresponding to `level
+    under the current directory.
+
+    Return:
+        ndirs   :   the directory visited
+        data    :   user specified data returned from `cmd`
+
+    """
+    dirs = get_level_dirs(level)
+    if normalize:
+        dirs = [normpath(d) for d in dirs]
+    data = []
+    for d in dirs:
+        exec(cmd)
+
+    return dirs, data
