@@ -3,6 +3,7 @@ import glob
 import re
 import json
 import numpy as np
+from . import misc
 
 levels = []
 level_patterns_s = []
@@ -190,10 +191,11 @@ def processLevel(level, cmd="", normalize=True):
 
     """
     dirs = get_level_dirs(level)
-    if normalize:
-        dirs = [normpath(d) for d in dirs]
     data = []
     for d in dirs:
-        exec(cmd)
+        with misc.CWD(d):
+            exec(cmd)
 
+    if normalize:
+        dirs = [normpath(d) for d in dirs]
     return dirs, data
