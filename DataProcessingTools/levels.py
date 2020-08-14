@@ -180,10 +180,11 @@ def normpath(cwd):
     return os.path.join(*parts[-this_idx:])
 
 
-def processLevel(level, cmd="", normalize=True):
+def processLevel(level, cmd="", normalize=True, exclude=[]):
     """
     Evaluate the code in `cmd` for each directory corresponding to `level
-    under the current directory.
+    under the current directory. Directories containing any of the patters in
+    `exclude` will be skipped.
 
     Return:
         ndirs   :   the directory visited
@@ -192,10 +193,19 @@ def processLevel(level, cmd="", normalize=True):
     """
     dirs = get_level_dirs(level)
     data = []
+    outdirs = []
     for d in dirs:
+        do_exclude = False
+        for ed in exclude:
+            if d.find(ed) > -1:
+                do_exclude = True
+                break
+        if do_exclude:
+            continue
         with misc.CWD(d):
             exec(cmd)
+            outdirs.append(d)
 
     if normalize:
-        dirs = [normpath(d) for d in dirs]
-    return dirs, data
+        outdirs = [normpath(d) for d in outdirs]
+    return outdirs, data
