@@ -96,16 +96,19 @@ def test_processLevel():
         with DPT.misc.CWD("data2"):
             dir1 = "Pancake/20130923/session01/array02/channel033"
             dir2 = "Pancake/20130923/session01/array02/channel034"
-            for d in [dir1, dir2]:
+            dir3 = "Pancake/20130923/session01/array02/channel035"
+            for d in [dir1, dir2, dir3]:
                 if not os.path.isdir(d):
                     os.makedirs(d)
 
             dirs, data = DPT.levels.processLevel("channel",
-                                                 "x = 1; y = 2; data.append([x,y])")
+                                                 "x = 1; y = 2; data.append([x,y])",
+                                                 exclude=["channel035"])
 
+            assert len(dirs) == 2
             assert dirs[0] == dir1
             assert dirs[1] == dir2
             assert data == [[1, 2], [1, 2]]
-            for d in [dir1, dir2]:
+            for d in [dir1, dir2, dir3]:
                 os.removedirs(d)
         os.rmdir("data2")
