@@ -34,7 +34,7 @@ class LFPData(DPObject):
         #  computed data from Julia
         if fname is None:
             fname = self.getfilename()
-       
+
         with h5py.File(fname) as ff:
             _data = ff["lowpassdata/data"]
             self.data = _data["data"][:]
