@@ -91,5 +91,9 @@ class LFPData(DPObject):
         lfpdata.high_freq = highfreq
         lfpdata.sampling_rate = self.sampling_rate
         lfpdata.channel = self.channel
+        z,p,k = signal.tf2zpk(b, a)
+        lfpdata.filter_coefs = {"z": z,
+                                "p": p,
+                                "k": k}
 
         return lfpdata
