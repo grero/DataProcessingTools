@@ -8,5 +8,6 @@ setup(name="DataProcessingTools",
       author_email="roger.herikstad@gmail.com",
       license="MIT",
       packages=["DataProcessingTools"],
-      include_package_data=True
+      include_package_data=True,
+      package_data = {"": ["config.json"]},
       )
