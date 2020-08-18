@@ -40,5 +40,31 @@ class LFPData(DPObject):
             self.sampling_rate = _data["sampling_rate"][:]
             self.channel = _data["channel"][:]
         
+    def filter(self, lowfreq, highfreq,
+            filter_name="Butterworth", filter_order=4):
+        """
+        Create a new LFP object from the current one by applying
+        the supplied filter
+        """
+        if filter_name == "Butterworth":
+            N = filter_order
+            fs = self.sampling_rate
+            b, a = signal.butter(N, [lowfreq/fs, highfreq/fs],
+                                 "bandpass")
+        else:    
+            raise(ValueError("Unknown filter type"))
 
+        fdata = signal.filtfilt(b, a, self.data)
 
+        # crete an empty object
+        lfpdata = LFPData(dirs=[])
+        lfpdata.data = fdata
+        lfpdata.filtet_coefs = {}
+        lfpdata.filter_name = filter_name
+        lfpdata.filter_order = filter_order
+        lfpdata.low_freq = lowfreq
+        lfpdata.high_freq = highfreq
+        lfpdata.sampling_rate = self.sampling_rate
+        lfpdata.channel = self.channel
+
+        return lfpdata
