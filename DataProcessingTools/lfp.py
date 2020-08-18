@@ -9,6 +9,13 @@ class LFPData(DPObject):
                 ("filterName", "Butterworth"),
                 ("filterOrder", 4)]
 
+    def __init__(self, *args, **kwargs):
+        fname = kwargs.get("loadFrom")
+        if fname is not None:
+            self.load(fname)
+        else:
+            DPObject.__init__(self, *args, **kwargs)
+
     def create(self, *args, **kwargs):
         dirs = kwargs.get("dirs")
         self.dirs = dirs
