@@ -1,6 +1,7 @@
 from .objects import DPObject
 import h5py
 import scipy.signal as signal
+import matplotlib.pylab as plt
 
 class LFPData(DPObject):
     filename = "lowpass.mat"
@@ -97,3 +98,9 @@ class LFPData(DPObject):
                                 "k": k}
 
         return lfpdata
+
+    def plot(self, i=None, ax=None):
+        if ax is None:
+            ax = plt.gca()
+        
+        ax.plot(self.data)
