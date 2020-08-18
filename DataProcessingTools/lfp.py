@@ -46,7 +46,25 @@ class LFPData(DPObject):
             self.high_freq = _data["high_freq"][:]
             self.sampling_rate = _data["sampling_rate"][:]
             self.channel = _data["channel"][:]
-        
+
+    def save(self, fname=None):
+        if fname is None:
+            fname = self.get_filename()
+
+        with h5py.File(fname, "w") as ff:
+            _ldata = ff.create_group("lowpassdata")
+            _data = _ldata.create_group("data")
+            _data["data"] = self.data
+            _data["sampling_rate"] = self.sampling_rate
+            _data["channel"] = self.channel
+            _data["filter_order"] = self.filter_order
+            _data["filter_name"] = self.filter_name
+            _coefs = _data.create_group("filter_coefs")
+            for (k, v) in self.filter_coefs.items():
+                _coefs[k] = v
+
+
+
     def filter(self, lowfreq, highfreq,
             filter_name="Butterworth", filter_order=4):
         """
