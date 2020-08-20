@@ -173,6 +173,7 @@ class DPObject():
             mx = self.setidx[-1]+1
             for s in obj.setidx:
                 self.setidx.append(s+mx)
+        if self.dirs:
             for d in obj.dirs:
                 self.dirs.append(d)
 
