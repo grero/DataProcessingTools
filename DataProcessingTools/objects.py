@@ -65,11 +65,11 @@ class DPObject():
 
     def create(self, *args, **kwargs):
         self.dirs = kwargs.get("dirs", [os.getcwd()])
+        self.setidx = []
         if self.dirs:
             normpath = kwargs.get("normpath", True)
             if normpath:
                 self.dirs = [levels.normpath(d) for d in self.dirs]
-            self.setidx = []
             self.plotopts = {"indexer": self.level}
             self.indexer = self.getindex(self.level)
             self.current_idx = None
@@ -239,6 +239,8 @@ def processDirs(dirs, objtype, *args, **kwargs):
     """
     if dirs is None:
         dirs = levels.get_level_dirs(objtype.level)
+    if not dirs:
+        return objtype(dirs=[])
 
     ii = 0
     while ii < len(dirs):

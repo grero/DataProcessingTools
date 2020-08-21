@@ -77,13 +77,17 @@ def test_append():
         # do the same thing with processDirs
         obj3 = DPT.objects.processDirs(dirs, MyObj, [0.1, 0.2, 0.3])
         obj4 = DPT.objects.processDirs(None, MyObj, [0.1, 0.2, 0.3])
+        obj5 = DPT.objects.processDirs([], MyObj, [0.1, 0.2, 0.3])
+
     assert obj1.setidx == [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
     assert obj3.setidx == obj1.setidx
     assert obj4.setidx == obj3.setidx
+    assert obj5.setidx == []
 
     assert obj1.dirs == dirs
     assert obj1.dirs == obj3.dirs
     assert obj1.dirs == obj4.dirs
+    assert obj5.dirs == []
     mylevels = obj1.getlevels()
     assert mylevels == ["subject", "day", "session","array","channel","cell"]
 
