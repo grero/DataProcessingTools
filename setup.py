@@ -1,4 +1,4 @@
-from setuptools import setup
+from distutils.core import setup
 
 setup(name="DataProcessingTools",
       version="0.16.0",
@@ -8,6 +8,5 @@ setup(name="DataProcessingTools",
       author_email="roger.herikstad@gmail.com",
       license="MIT",
       packages=["DataProcessingTools"],
-      include_package_data=True,
-      package_data={"": ["DataProcessingTools/config.json"]},
+      package_data={"DataProcessingTools": ["config.json"]},
       )
