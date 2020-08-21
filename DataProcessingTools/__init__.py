@@ -1,3 +1,2 @@
-from . import misc, levels, objects, raster, psth, trialstructures
+from . import misc, levels, objects
 from .objects import DPObject
-from .spiketrain import Spiketrain

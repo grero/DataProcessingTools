@@ -122,12 +122,18 @@ def test_object():
     class MyObj2(DPT.objects.DPObject):
         argsList = ["tmin", "tmax"]
         filename = "test.mat"
-
-    assert MyObj2.level is None
-    obj = MyObj2(-0.1, 1.0, normpath=False)
-
-    assert obj.args["tmin"] == -0.1
-    assert obj.args["tmax"] == 1.0
+    
+    tdir = tempfile.gettempdir()
+    with DPT.misc.CWD(tdir):
+        assert MyObj2.level is None
+        obj = MyObj2(-0.1, 1.0, normpath=False, saveLevel=1)
+        assert os.path.isfile(obj.get_filename())
+        assert obj.args["tmin"] == -0.1
+        assert obj.args["tmax"] == 1.0
+        obj2 = MyObj2(-0.1, 1.0, normpath=False)
+        assert obj2.args["tmin"] == obj.args["tmin"]
+        assert obj2.args["tmax"] == obj.args["tmax"]
+        os.unlink(obj.get_filename())
 
 
 def test_empty():
