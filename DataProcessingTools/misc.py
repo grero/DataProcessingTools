@@ -33,3 +33,10 @@ def processDirs(dirs):
                     func(*args, **kwargs)
         return wrapper_processDirs
     return decorate_func
+
+def issubpath(p1, p2):
+    """
+    Return `True` if `p1` is a sub-path of `p2`.
+
+    """
+    return p2.find(p1) > -1
