@@ -172,4 +172,8 @@ def test_cmdobj():
             os.removedirs(d)
         assert cmdobj_f.data == [1, 1]
         assert cmdobj_p.data == cmdobj_f.data
+        assert len(cmdobj_p.dirs) == 2
+        assert DPT.misc.issubpath(dirs[0], cmdobj_p.dirs[0])
+        assert DPT.misc.issubpath(dirs[1], cmdobj_p.dirs[1])
+        assert cmdobj_p.dirs == cmdobj_f.dirs
     os.rmdir(tdir)
