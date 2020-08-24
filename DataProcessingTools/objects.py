@@ -23,6 +23,21 @@ class ExclusiveOptions():
     def selected(self):
         return self.options[self.checked]
 
+
+class DirCmd():
+    """
+    Run a command, appending the result to `data`
+    """
+    def __init__(self, cmd=None):
+        data = []
+        exec(cmd, {}, {"data": data})
+        self.data = data
+        self.dirs = [os.getcwd()]
+
+    def append(self, obj):
+        self.data.extend(obj.data)
+
+
 class DPObject():
     argsList = []
     filename = ""
