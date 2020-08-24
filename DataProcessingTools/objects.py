@@ -6,6 +6,7 @@ import hashlib
 from . import levels, misc
 import h5py
 import os
+import fnmatch
 
 
 class ExclusiveOptions():
@@ -261,15 +262,15 @@ def processDirs(dirs, objtype, *args, **kwargs):
 
     exclude = kwargs.get("exclude", [])
     outdirs = []
+    pp = []
     for d in dirs:
         do_exclude = False
         for ed in exclude:
-            if d.find(ed) > -1:
-                do_exclude = True
+            do_exclude = fnmatch.fnmatch(d, ed)
+            if do_exclude:
                 break
-        if do_exclude:
-            continue
-        outdirs.append(d)
+        if not do_exclude:
+            outdirs.append(d)
 
     ii = 0
     while ii < len(outdirs):
