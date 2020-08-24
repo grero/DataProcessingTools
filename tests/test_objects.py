@@ -148,3 +148,21 @@ def test_empty():
     obj = MyObj3(1.0, 0.1, normpath=False)
     # test that no object was saved
     assert not os.path.isfile("test3.mat")
+
+
+def test_cmdobj():
+    tdir = tempfile.gettempdir()
+    with DPT.misc.CWD(tdir):
+        cmdobj1 = DPT.objects.DirCmd("data.append(1)")
+        cmdobj2 = DPT.objects.DirCmd("data.append(2)")
+        cmdobj1.append(cmdobj2)
+        assert cmdobj1.data == [1, 2]
+
+        dirs = ["dir1", "dir2"]
+        for d in dirs:
+            if not os.path.isdir(d):
+                os.mkdir(d)
+        cmdobj = DPT.objects.processDirs(dirs, DPT.objects.DirCmd, cmd="data.append(1)")
+        for d in dirs:
+            os.rmdir(d)
+        assert cmdobj.data == [1, 1]
