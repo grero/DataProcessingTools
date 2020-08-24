@@ -259,16 +259,28 @@ def processDirs(dirs, objtype, *args, **kwargs):
     if not dirs:
         return objtype(dirs=[])
 
+    exclude = kwargs.get("exclude", [])
+    outdirs = []
+    for d in dirs:
+        do_exclude = False
+        for ed in exclude:
+            if d.find(ed) > -1:
+                do_exclude = True
+                break
+        if do_exclude:
+            continue
+        outdirs.append(d)
+
     ii = 0
-    while ii < len(dirs):
-        with misc.CWD(dirs[ii]):
+    while ii < len(outdirs):
+        with misc.CWD(outdirs[ii]):
             obj = objtype(*args, **kwargs)
             ii += 1
             if obj.dirs:
                 break
 
-    while ii < len(dirs):
-        with misc.CWD(dirs[ii]):
+    while ii < len(outdirs):
+        with misc.CWD(outdirs[ii]):
             obj1 = objtype(*args, **kwargs)
             ii += 1
             if obj1.dirs:
