@@ -28,7 +28,7 @@ class DirCmd():
     """
     Run a command, appending the result to `data`
     """
-    def __init__(self, cmd=None):
+    def __init__(self, cmd=None, **kwargs):
         data = []
         exec(cmd, {}, {"data": data})
         self.data = data
