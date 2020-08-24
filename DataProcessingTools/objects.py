@@ -254,6 +254,8 @@ def processDirs(dirs, objtype, *args, **kwargs):
     """
     if dirs is None:
         dirs = levels.get_level_dirs(objtype.level)
+    elif isinstance(dirs, str):
+        dirs = levels.get_level_dirs(dirs)
     if not dirs:
         return objtype(dirs=[])
 
