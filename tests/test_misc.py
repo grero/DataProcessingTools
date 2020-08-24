@@ -35,3 +35,8 @@ def test_procesDirs():
             os.rmdir(d)
         assert allok
 
+
+def test_subpath():
+    p2 = "Pancake/20130923/session02/array02/channel002"
+    p1 = "array02/channel002"
+    assert DPT.misc.issubpath(p1, p2)

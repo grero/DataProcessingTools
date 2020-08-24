@@ -148,3 +148,32 @@ def test_empty():
     obj = MyObj3(1.0, 0.1, normpath=False)
     # test that no object was saved
     assert not os.path.isfile("test3.mat")
+
+
+def test_cmdobj():
+    tdir = os.path.join(tempfile.gettempdir(), "testcmd")
+    if not os.path.isdir(tdir):
+        os.mkdir(tdir) 
+    with DPT.misc.CWD(tdir):
+        cmdobj1 = DPT.objects.DirCmd("data.append(1)")
+        cmdobj2 = DPT.objects.DirCmd("data.append(2)")
+        cmdobj1.append(cmdobj2)
+        assert cmdobj1.data == [1, 2]
+
+        dirs = ["array01/channel001", "array1/channel002","array01/channel003"]
+        for d in dirs:
+            if not os.path.isdir(d):
+                os.makedirs(d)
+        cmdobj_f = DPT.objects.processDirs(dirs, DPT.objects.DirCmd, cmd="data.append(1)",
+                                           exclude=["*array01/channel003"])
+        cmdobj_p = DPT.objects.processDirs("channel", DPT.objects.DirCmd, cmd="data.append(1)",
+                                           exclude=["*array01/channel003"])
+        for d in dirs:
+            os.removedirs(d)
+        assert cmdobj_f.data == [1, 1]
+        assert cmdobj_p.data == cmdobj_f.data
+        assert len(cmdobj_p.dirs) == 2
+        assert DPT.misc.issubpath(dirs[0], cmdobj_p.dirs[0])
+        assert DPT.misc.issubpath(dirs[1], cmdobj_p.dirs[1])
+        assert cmdobj_p.dirs == cmdobj_f.dirs
+    os.rmdir(tdir)

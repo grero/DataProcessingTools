@@ -4,8 +4,10 @@ import pickle
 import hickle
 import hashlib
 from . import levels, misc
+from .levels import normpath
 import h5py
 import os
+import fnmatch
 
 
 class ExclusiveOptions():
@@ -22,6 +24,22 @@ class ExclusiveOptions():
 
     def selected(self):
         return self.options[self.checked]
+
+
+class DirCmd():
+    """
+    Run a command, appending the result to `data`
+    """
+    def __init__(self, cmd=None, **kwargs):
+        data = []
+        exec(cmd, {}, {"data": data})
+        self.data = data
+        self.dirs = [os.getcwd()]
+
+    def append(self, obj):
+        self.data.extend(obj.data)
+        self.dirs.extend(obj.dirs)
+
 
 class DPObject():
     argsList = []
@@ -239,19 +257,37 @@ def processDirs(dirs, objtype, *args, **kwargs):
     """
     if dirs is None:
         dirs = levels.get_level_dirs(objtype.level)
+    elif isinstance(dirs, str):
+        dirs = levels.get_level_dirs(dirs)
     if not dirs:
         return objtype(dirs=[])
 
+    do_normpath = kwargs.get("do_normpath", False)
+    exclude = kwargs.get("exclude", [])
+    outdirs = []
+    pp = []
+    for d in dirs:
+        do_exclude = False
+        for ed in exclude:
+            do_exclude = fnmatch.fnmatch(d, ed)
+            if do_exclude:
+                break
+        if not do_exclude:
+            if do_normpath:
+                outdirs.append(normpath(d))
+            else:
+                outdirs.append(d)
+
     ii = 0
-    while ii < len(dirs):
-        with misc.CWD(dirs[ii]):
+    while ii < len(outdirs):
+        with misc.CWD(outdirs[ii]):
             obj = objtype(*args, **kwargs)
             ii += 1
             if obj.dirs:
                 break
 
-    while ii < len(dirs):
-        with misc.CWD(dirs[ii]):
+    while ii < len(outdirs):
+        with misc.CWD(outdirs[ii]):
             obj1 = objtype(*args, **kwargs)
             ii += 1
             if obj1.dirs:
