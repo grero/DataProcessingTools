@@ -4,6 +4,7 @@ import pickle
 import hickle
 import hashlib
 from . import levels, misc
+from .levels import normpath
 import h5py
 import os
 import fnmatch
@@ -260,6 +261,7 @@ def processDirs(dirs, objtype, *args, **kwargs):
     if not dirs:
         return objtype(dirs=[])
 
+    do_normpath = kwargs.get("do_normpath", False)
     exclude = kwargs.get("exclude", [])
     outdirs = []
     pp = []
@@ -270,7 +272,10 @@ def processDirs(dirs, objtype, *args, **kwargs):
             if do_exclude:
                 break
         if not do_exclude:
-            outdirs.append(d)
+            if do_normpath:
+                outdirs.append(normpath(d))
+            else:
+                outdirs.append(d)
 
     ii = 0
     while ii < len(outdirs):
