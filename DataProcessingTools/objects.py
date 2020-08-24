@@ -38,6 +38,7 @@ class DirCmd():
 
     def append(self, obj):
         self.data.extend(obj.data)
+        self.dirs.extend(obj.dirs)
 
 
 class DPObject():
