@@ -165,9 +165,9 @@ def test_cmdobj():
             if not os.path.isdir(d):
                 os.makedirs(d)
         cmdobj_f = DPT.objects.processDirs(dirs, DPT.objects.DirCmd, cmd="data.append(1)",
-                                           exclude=["array01/channel003"])
+                                           exclude=["*array01/channel003"])
         cmdobj_p = DPT.objects.processDirs("channel", DPT.objects.DirCmd, cmd="data.append(1)",
-                                           exclude=["array01/channel003"])
+                                           exclude=["*array01/channel003"])
         for d in dirs:
             os.removedirs(d)
         assert cmdobj_f.data == [1, 1]
