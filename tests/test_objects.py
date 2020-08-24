@@ -151,18 +151,22 @@ def test_empty():
 
 
 def test_cmdobj():
-    tdir = tempfile.gettempdir()
+    tdir = os.path.join(tempfile.gettempdir(), "testcmd")
+    os.mkdir(tdir) 
     with DPT.misc.CWD(tdir):
         cmdobj1 = DPT.objects.DirCmd("data.append(1)")
         cmdobj2 = DPT.objects.DirCmd("data.append(2)")
         cmdobj1.append(cmdobj2)
         assert cmdobj1.data == [1, 2]
 
-        dirs = ["dir1", "dir2"]
+        dirs = ["array01/channel001", "array1/channel002"]
         for d in dirs:
             if not os.path.isdir(d):
-                os.mkdir(d)
-        cmdobj = DPT.objects.processDirs(dirs, DPT.objects.DirCmd, cmd="data.append(1)")
+                os.makedirs(d)
+        cmdobj_f = DPT.objects.processDirs(dirs, DPT.objects.DirCmd, cmd="data.append(1)")
+        cmdobj_p = DPT.objects.processDirs("channel", DPT.objects.DirCmd, cmd="data.append(1)")
         for d in dirs:
-            os.rmdir(d)
-        assert cmdobj.data == [1, 1]
+            os.removedirs(d)
+        assert cmdobj_f.data == [1, 1]
+        assert cmdobj_p.data == cmdobj_f.data
+    os.rmdir(tdir)
