@@ -8,6 +8,7 @@ from .levels import normpath
 import h5py
 import os
 import fnmatch
+import pathlib
 
 
 class ExclusiveOptions():
@@ -212,6 +213,10 @@ class DPObject():
         for (k, v) in data.items():
             if k == "args":
                 self.args = v
+            elif k == "dirs":
+                self.dirs = []
+                for d in v:
+                    self.dirs.append(pathlib.Path(d))
             elif k == "indexer":
                 pass
             else:
