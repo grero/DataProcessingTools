@@ -3,3 +3,4 @@ scipy
 matplotlib
 h5py
 hickle
+pathlib
