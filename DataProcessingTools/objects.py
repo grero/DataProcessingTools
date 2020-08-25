@@ -216,7 +216,7 @@ class DPObject():
             elif k == "dirs":
                 self.dirs = []
                 for d in v:
-                    self.dirs.append(pathlib.Path(d))
+                    self.dirs.append(str(pathlib.Path(d)))
             elif k == "indexer":
                 pass
             else:
