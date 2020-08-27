@@ -48,39 +48,43 @@ class DPObject():
     level = None
 
     def __init__(self, *args, **kwargs):
-        self.args = {}
-        # process positional arguments
-        # TODO: We need to somehow consume these, ie. remove the processed ones
-        pargs = [p for p in filter(lambda t: not isinstance(t, tuple), type(self).argsList)]
-        qargs = pargs.copy()
-        for (k, v) in zip(pargs, args):
-            self.args[k] = v
-            qargs.remove(k)
-        # run the remaining throgh kwargs
-        for k in qargs:
-            if k in kwargs.keys():
-                self.args[k] = kwargs[k]
-
-        # process keyword arguments
-        kargs = filter(lambda t: isinstance(t, tuple), type(self).argsList)
-        for (k, v) in kargs:
-            self.args[k] = kwargs.get(k, v)
-
-        redoLevel = kwargs.get("redoLevel", 0)
-        saveLevel = kwargs.get("saveLevel", 0)
-        fname = self.get_filename()
-        verbose = kwargs.get("verbose", 1)
-        if redoLevel == 0 and os.path.isfile(fname):
-            self.load(fname)
-            if verbose > 0:
-                print("Object loaded from file {0}".format(fname))
+        fname = kwargs.get("loadFrom", None)
+        if fname is not None:
+            self.load(fname=fname)
         else:
-            # create object
-            self.create(*args, **kwargs)
-            if self.dirs and saveLevel > 0:
-                self.save()
+            self.args = {}
+            # process positional arguments
+            # TODO: We need to somehow consume these, ie. remove the processed ones
+            pargs = [p for p in filter(lambda t: not isinstance(t, tuple), type(self).argsList)]
+            qargs = pargs.copy()
+            for (k, v) in zip(pargs, args):
+                self.args[k] = v
+                qargs.remove(k)
+            # run the remaining throgh kwargs
+            for k in qargs:
+                if k in kwargs.keys():
+                    self.args[k] = kwargs[k]
+
+            # process keyword arguments
+            kargs = filter(lambda t: isinstance(t, tuple), type(self).argsList)
+            for (k, v) in kargs:
+                self.args[k] = kwargs.get(k, v)
+
+            redoLevel = kwargs.get("redoLevel", 0)
+            saveLevel = kwargs.get("saveLevel", 0)
+            fname = self.get_filename()
+            verbose = kwargs.get("verbose", 1)
+            if redoLevel == 0 and os.path.isfile(fname):
+                self.load(fname)
                 if verbose > 0:
-                    print("Object saved to file {0}".format(fname))
+                    print("Object loaded from file {0}".format(fname))
+            else:
+                # create object
+                self.create(*args, **kwargs)
+                if self.dirs and saveLevel > 0:
+                    self.save()
+                    if verbose > 0:
+                        print("Object saved to file {0}".format(fname))
 
     def create(self, *args, **kwargs):
         self.dirs = kwargs.get("dirs", [os.getcwd()])
