@@ -273,6 +273,9 @@ def processDirs(dirs=None, objtype=None, level=None,
 
     outdirs = []
     pp = []
+    cmd = kwargs.get("cmd")
+    if cmd is not None and objtype is None:
+        objtype = DirCmd
     for d in dirs:
         do_exclude = False
         for ed in exclude:

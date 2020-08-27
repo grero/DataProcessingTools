@@ -167,7 +167,7 @@ def test_cmdobj():
         for d in dirs:
             if not os.path.isdir(d):
                 os.makedirs(d)
-        cmdobj_f = DPT.objects.processDirs(dirs=dirs, objtype=DPT.objects.DirCmd,
+        cmdobj_f = DPT.objects.processDirs(dirs=dirs,
                                            cmd="data.append(1)",
                                            exclude=["*array01/channel003"])
         cmdobj_p = DPT.objects.processDirs(level="channel",objtype= DPT.objects.DirCmd,
