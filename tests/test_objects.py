@@ -115,6 +115,10 @@ def test_append():
     assert obj.get_filename() == "myobj_c872.hkl"
     obj.save()
     assert os.path.isfile(obj.get_filename())
+    obj7 = MyObj(loadFrom="myobj_c872.hkl")
+    assert obj7.args["bins"] == obj.args["bins"]
+    assert obj7.dirs == obj.dirs
+
     os.remove(obj.get_filename())
 
 def test_object():
