@@ -53,7 +53,7 @@ class DPObject():
         if fname is not None:
             self.load(fname=fname)
         else:
-            if self.level is not None and _dirs:
+            if self.level is not None and _dirs != []:
                 ldir = levels.resolve_level(self.level)
             else:
                 ldir = os.getcwd()
