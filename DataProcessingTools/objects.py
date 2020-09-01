@@ -263,24 +263,29 @@ class DPObjects():
         return self.objects[j].plot(*args, **kwargs)
 
 
-def processDirs(dirs, objtype, *args, **kwargs):
+def processDirs(dirs=None, objtype=None, level=None, 
+                getArgsList=False, exclude=[], objargs=[], 
+                do_normpath=False, **kwargs):
     """
     Instantiates an object of type `objtype` in each directory in `dirs`,
     concatenating them into a single object that is then returned
 
     If `dirs` is `None`, all directories under the current directory will be visited.
     """
+    if getArgsList:
+        return ["dirs", "objtype", "level", "exclude"]
     if dirs is None:
-        dirs = levels.get_level_dirs(objtype.level)
-    elif isinstance(dirs, str):
-        dirs = levels.get_level_dirs(dirs)
+        if level is None:
+            level = objtype.level
+        dirs = levels.get_level_dirs(level)
     if not dirs:
         return objtype(dirs=[])
 
-    do_normpath = kwargs.get("do_normpath", False)
-    exclude = kwargs.get("exclude", [])
     outdirs = []
     pp = []
+    cmd = kwargs.get("cmd")
+    if cmd is not None and objtype is None:
+        objtype = DirCmd
     for d in dirs:
         do_exclude = False
         for ed in exclude:
@@ -296,14 +301,14 @@ def processDirs(dirs, objtype, *args, **kwargs):
     ii = 0
     while ii < len(outdirs):
         with misc.CWD(outdirs[ii]):
-            obj = objtype(*args, **kwargs)
+            obj = objtype(*objargs, **kwargs)
             ii += 1
             if obj.dirs:
                 break
 
     while ii < len(outdirs):
         with misc.CWD(outdirs[ii]):
-            obj1 = objtype(*args, **kwargs)
+            obj1 = objtype(*objargs, **kwargs)
             ii += 1
             if obj1.dirs:
                 obj.append(obj1)
