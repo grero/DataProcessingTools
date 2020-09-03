@@ -273,7 +273,8 @@ def processDirs(dirs=None, objtype=None, level=None,
     If `dirs` is `None`, all directories under the current directory will be visited.
     """
     if getArgsList:
-        return ["dirs", "objtype", "level", "exclude"]
+        return {"dirs": None, "objtype": None,
+                "level":None, "exclude": []}
     if dirs is None:
         if level is None:
             level = objtype.level
