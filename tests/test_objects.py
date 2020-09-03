@@ -187,4 +187,5 @@ def test_cmdobj():
         assert cmdobj_p.dirs == cmdobj_f.dirs
     os.rmdir(tdir)
     argslist = DPT.objects.processDirs(getArgsList=True)
-    assert argslist == ["dirs", "objtype", "level", "exclude"]
+    assert argslist == {"dirs": None, "objtype":None,
+                        "level": None, "exclude": []}
