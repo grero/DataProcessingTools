@@ -122,6 +122,9 @@ def test_append():
     assert obj7.args["bins"] == obj.args["bins"]
     assert obj7.dirs == obj.dirs
 
+    obj8 = MyObj(loadFrom=["myobj_c872.hkl","something_else.hkl"])
+    assert obj8.dirs == obj.dirs
+
     os.remove(obj.get_filename())
 
 def test_object():
