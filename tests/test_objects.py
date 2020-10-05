@@ -68,6 +68,10 @@ def test_append():
             obj1 = MyObj([0.1, 0.2, 0.3])
             h = obj1.hash()
             assert h == "c872"
+            # test that we can ignore files
+            obj2 = MyObj([0.1, 0.2, 0.3], loadFrom=["fake_file.hkl"])
+            h2 = obj2.hash()
+            assert h2 == h
 
         for d in dirs[1:]:
             with DPT.misc.CWD(d):
@@ -121,6 +125,11 @@ def test_append():
     obj7 = MyObj(loadFrom="myobj_c872.hkl")
     assert obj7.args["bins"] == obj.args["bins"]
     assert obj7.dirs == obj.dirs
+
+    obj8 = MyObj(loadFrom=["myobj_c872.hkl",
+                           "something_else.hkl"])
+
+    assert obj8.dirs == obj.dirs
 
     os.remove(obj.get_filename())
 

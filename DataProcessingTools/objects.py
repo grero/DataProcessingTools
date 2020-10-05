@@ -49,6 +49,17 @@ class DPObject():
 
     def __init__(self, *args, **kwargs):
         fname = kwargs.get("loadFrom", None)
+        if isinstance(fname, list):
+            # go through the list of filenames and check if one matches for this object
+            bn, ext = os.path.splitext(self.filename)
+            found = False
+            for fn in fname:
+                if fn.find(bn) > -1:
+                    fname = fn
+                    found = True
+                    break
+            if not found:
+                fname = None
         _dirs = kwargs.get("dirs")
         if fname is not None:
             self.load(fname=fname)
