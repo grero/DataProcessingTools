@@ -90,18 +90,28 @@ class DPObject():
                 redoLevel = kwargs.get("redoLevel", 0)
                 saveLevel = kwargs.get("saveLevel", 0)
                 fname = self.get_filename()
+                print('file name expected (new version): ', fname)
                 verbose = kwargs.get("verbose", 1)
                 if redoLevel == 0 and os.path.isfile(fname):
                     self.load(fname)
                     if verbose > 0:
                         print("Object loaded from file {0}".format(fname))
                 else:
-                    # create object
-                    self.create(*args, **kwargs)
-                    if self.dirs and saveLevel > 0:
-                        self.save()
+                    # attempt old hashing - os/version dependent
+                    fname = self.get_filename(legacy=1)
+                    print('file name expected (old version): ', fname)
+                    if redoLevel == 0 and os.path.isfile(fname):
+                        self.load(fname)
                         if verbose > 0:
-                            print("Object saved to file {0}".format(fname))
+                            print("Object loaded from file {0}".format(fname))                
+                    else:
+                        # unable to find for both hashing methods, create object, saving as new hash
+                        fname = self.get_filename()                    # create object
+                        self.create(*args, **kwargs)
+                        if self.dirs and saveLevel > 0:
+                            self.save()
+                            if verbose > 0:
+                                print("Object saved to file {0}".format(fname))
 
     def create(self, *args, **kwargs):
         self.dirs = kwargs.get("dirs", [os.getcwd()])
@@ -217,12 +227,15 @@ class DPObject():
             for d in obj.dirs:
                 self.dirs.append(d)
 
-    def get_filename(self):
+    def get_filename(self,legacy=0):
         """
         Return the base filename with an argument hash
         appended
         """
-        h = self.hash()
+        if legacy:
+            h = self.hash()
+        else:
+            h = self.hashalt()
         fn, ext = os.path.splitext(self.filename)
         fname = self.filename.replace(ext, "_{0}{1}".format(h, ext))
         return fname
@@ -230,6 +243,7 @@ class DPObject():
     def load(self, fname=None):
         if fname is None:
             fname = self.get_filename()
+        
         data = hickle.load(fname)
         for (k, v) in data.items():
             if k == "args":
@@ -255,6 +269,14 @@ class DPObject():
     def hash(self):
         s = pickle.dumps(self.args)
         return hashlib.md5(s).hexdigest()[:4]
+    
+    def hashalt(self):
+        m = hashlib.md5()
+        for k,v in self.args.items():
+            m.update(str(k).encode('utf-8'))
+            m.update(str(v).encode('utf-8'))
+        return m.hexdigest()[:4]
+        
 
 class DPObjects():
     def __init__(self, objects):
