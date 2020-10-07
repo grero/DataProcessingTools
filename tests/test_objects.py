@@ -68,6 +68,10 @@ def test_append():
             obj1 = MyObj([0.1, 0.2, 0.3])
             h = obj1.hash()
             assert h == "c872"
+            # test that we can ignore files
+            obj2 = MyObj([0.1, 0.2, 0.3], loadFrom=["fake_file.hkl"])
+            h2 = obj2.hash()
+            assert h2 == h
 
         for d in dirs[1:]:
             with DPT.misc.CWD(d):
@@ -75,9 +79,12 @@ def test_append():
                 obj1.append(obj)
 
         # do the same thing with processDirs
-        obj3 = DPT.objects.processDirs(dirs, MyObj, [0.1, 0.2, 0.3])
-        obj4 = DPT.objects.processDirs(None, MyObj, [0.1, 0.2, 0.3])
-        obj5 = DPT.objects.processDirs([], MyObj, [0.1, 0.2, 0.3])
+        obj3 = DPT.objects.processDirs(dirs=dirs, objtype=MyObj,
+                                       objargs=[[0.1, 0.2, 0.3]])
+        obj4 = DPT.objects.processDirs(objtype=MyObj,
+                                       objargs=[[0.1, 0.2, 0.3]])
+        obj5 = DPT.objects.processDirs(dirs=[], objtype=MyObj,
+                                       objargs=[[0.1, 0.2, 0.3]])
 
     assert obj1.setidx == [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
     assert obj3.setidx == obj1.setidx
@@ -112,12 +119,17 @@ def test_append():
     idx = obj1.getindex(None)
     assert (idx(0) == [0, 1, 2]).all()
 
-    assert obj.get_filename() == "myobj_c872.hkl"
+    assert obj.get_filename() == "myobj_3475.hkl"
     obj.save()
     assert os.path.isfile(obj.get_filename())
-    obj7 = MyObj(loadFrom="myobj_c872.hkl")
+    obj7 = MyObj(loadFrom="myobj_3475.hkl")
     assert obj7.args["bins"] == obj.args["bins"]
     assert obj7.dirs == obj.dirs
+
+    obj8 = MyObj(loadFrom=["myobj_3475.hkl",
+                           "something_else.hkl"])
+
+    assert obj8.dirs == obj.dirs
 
     os.remove(obj.get_filename())
 
@@ -168,9 +180,11 @@ def test_cmdobj():
         for d in dirs:
             if not os.path.isdir(d):
                 os.makedirs(d)
-        cmdobj_f = DPT.objects.processDirs(dirs, DPT.objects.DirCmd, cmd="data.append(1)",
+        cmdobj_f = DPT.objects.processDirs(dirs=dirs,
+                                           cmd="data.append(1)",
                                            exclude=["*array01/channel003"])
-        cmdobj_p = DPT.objects.processDirs("channel", DPT.objects.DirCmd, cmd="data.append(1)",
+        cmdobj_p = DPT.objects.processDirs(level="channel",objtype= DPT.objects.DirCmd,
+                                           cmd="data.append(1)",
                                            exclude=["*array01/channel003"])
         for d in dirs:
             os.removedirs(d)
@@ -181,3 +195,6 @@ def test_cmdobj():
         assert DPT.misc.issubpath(dirs[1], cmdobj_p.dirs[1])
         assert cmdobj_p.dirs == cmdobj_f.dirs
     os.rmdir(tdir)
+    argslist = DPT.objects.processDirs(getArgsList=True)
+    assert argslist == {"dirs": None, "objtype":None,
+                        "level": None, "exclude": []}
