@@ -90,7 +90,7 @@ class DPObject():
                 redoLevel = kwargs.get("redoLevel", 0)
                 saveLevel = kwargs.get("saveLevel", 0)
                 fname = self.get_filename()
-                print('file name expected (new version): ', fname)
+                # print('file name expected (new version): ', fname)
                 verbose = kwargs.get("verbose", 1)
                 if redoLevel == 0 and os.path.isfile(fname):
                     self.load(fname)
@@ -99,7 +99,7 @@ class DPObject():
                 else:
                     # attempt old hashing - os/version dependent
                     fname = self.get_filename(legacy=1)
-                    print('file name expected (old version): ', fname)
+                    # print('file name expected (old version): ', fname)
                     if redoLevel == 0 and os.path.isfile(fname):
                         self.load(fname)
                         if verbose > 0:
