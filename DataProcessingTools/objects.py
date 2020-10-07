@@ -49,52 +49,69 @@ class DPObject():
 
     def __init__(self, *args, **kwargs):
         fname = kwargs.get("loadFrom", None)
+        if isinstance(fname, list):
+            # go through the list of filenames and check if one matches for this object
+            bn, ext = os.path.splitext(self.filename)
+            found = False
+            for fn in fname:
+                if fn.find(bn) > -1:
+                    fname = fn
+                    found = True
+                    break
+            if not found:
+                fname = None
+        _dirs = kwargs.get("dirs")
         if fname is not None:
             self.load(fname=fname)
         else:
-            self.args = {}
-            # process positional arguments
-            # TODO: We need to somehow consume these, ie. remove the processed ones
-            pargs = [p for p in filter(lambda t: not isinstance(t, tuple), type(self).argsList)]
-            qargs = pargs.copy()
-            for (k, v) in zip(pargs, args):
-                self.args[k] = v
-                qargs.remove(k)
-            # run the remaining throgh kwargs
-            for k in qargs:
-                if k in kwargs.keys():
-                    self.args[k] = kwargs[k]
-
-            # process keyword arguments
-            kargs = filter(lambda t: isinstance(t, tuple), type(self).argsList)
-            for (k, v) in kargs:
-                self.args[k] = kwargs.get(k, v)
-
-            redoLevel = kwargs.get("redoLevel", 0)
-            saveLevel = kwargs.get("saveLevel", 0)
-            fname = self.get_filename()
-            print('file name expected (new version): ', fname)
-            verbose = kwargs.get("verbose", 1)
-            if redoLevel == 0 and os.path.isfile(fname):
-                self.load(fname)
-                if verbose > 0:
-                    print("Object loaded from file {0}".format(fname))
+            if self.level is not None and _dirs != []:
+                ldir = levels.resolve_level(self.level)
             else:
-                # attempt old hashing - os/version dependent
-                fname = self.get_filename(legacy=1)
-                print('file name expected (old version): ', fname)
+                ldir = os.getcwd()
+            with misc.CWD(ldir):
+                self.args = {}
+                # process positional arguments
+                # TODO: We need to somehow consume these, ie. remove the processed ones
+                pargs = [p for p in filter(lambda t: not isinstance(t, tuple), type(self).argsList)]
+                qargs = pargs.copy()
+                for (k, v) in zip(pargs, args):
+                    self.args[k] = v
+                    qargs.remove(k)
+                # run the remaining throgh kwargs
+                for k in qargs:
+                    if k in kwargs.keys():
+                        self.args[k] = kwargs[k]
+
+                # process keyword arguments
+                kargs = filter(lambda t: isinstance(t, tuple), type(self).argsList)
+                for (k, v) in kargs:
+                    self.args[k] = kwargs.get(k, v)
+
+                redoLevel = kwargs.get("redoLevel", 0)
+                saveLevel = kwargs.get("saveLevel", 0)
+                fname = self.get_filename()
+                print('file name expected (new version): ', fname)
+                verbose = kwargs.get("verbose", 1)
                 if redoLevel == 0 and os.path.isfile(fname):
                     self.load(fname)
                     if verbose > 0:
-                        print("Object loaded from file {0}".format(fname))                
+                        print("Object loaded from file {0}".format(fname))
                 else:
-                    # unable to find for both hashing methods, create object, saving as new hash
-                    fname = self.get_filename()
-                    self.create(*args, **kwargs)
-                    if self.dirs and saveLevel > 0:
-                        self.save()
+                    # attempt old hashing - os/version dependent
+                    fname = self.get_filename(legacy=1)
+                    print('file name expected (old version): ', fname)
+                    if redoLevel == 0 and os.path.isfile(fname):
+                        self.load(fname)
                         if verbose > 0:
-                            print("Object saved to file {0}".format(fname))
+                            print("Object loaded from file {0}".format(fname))                
+                    else:
+                        # unable to find for both hashing methods, create object, saving as new hash
+                        fname = self.get_filename()                    # create object
+                        self.create(*args, **kwargs)
+                        if self.dirs and saveLevel > 0:
+                            self.save()
+                            if verbose > 0:
+                                print("Object saved to file {0}".format(fname))
 
     def create(self, *args, **kwargs):
         self.dirs = kwargs.get("dirs", [os.getcwd()])
@@ -279,24 +296,30 @@ class DPObjects():
         return self.objects[j].plot(*args, **kwargs)
 
 
-def processDirs(dirs, objtype, *args, **kwargs):
+def processDirs(dirs=None, objtype=None, level=None, 
+                getArgsList=False, exclude=[], objargs=[], 
+                do_normpath=False, **kwargs):
     """
     Instantiates an object of type `objtype` in each directory in `dirs`,
     concatenating them into a single object that is then returned
 
     If `dirs` is `None`, all directories under the current directory will be visited.
     """
+    if getArgsList:
+        return {"dirs": None, "objtype": None,
+                "level":None, "exclude": []}
     if dirs is None:
-        dirs = levels.get_level_dirs(objtype.level)
-    elif isinstance(dirs, str):
-        dirs = levels.get_level_dirs(dirs)
+        if level is None:
+            level = objtype.level
+        dirs = levels.get_level_dirs(level)
     if not dirs:
         return objtype(dirs=[])
 
-    do_normpath = kwargs.get("do_normpath", False)
-    exclude = kwargs.get("exclude", [])
     outdirs = []
     pp = []
+    cmd = kwargs.get("cmd")
+    if cmd is not None and objtype is None:
+        objtype = DirCmd
     for d in dirs:
         do_exclude = False
         for ed in exclude:
@@ -312,14 +335,14 @@ def processDirs(dirs, objtype, *args, **kwargs):
     ii = 0
     while ii < len(outdirs):
         with misc.CWD(outdirs[ii]):
-            obj = objtype(*args, **kwargs)
+            obj = objtype(*objargs, **kwargs)
             ii += 1
             if obj.dirs:
                 break
 
     while ii < len(outdirs):
         with misc.CWD(outdirs[ii]):
-            obj1 = objtype(*args, **kwargs)
+            obj1 = objtype(*objargs, **kwargs)
             ii += 1
             if obj1.dirs:
                 obj.append(obj1)
