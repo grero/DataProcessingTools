@@ -119,14 +119,14 @@ def test_append():
     idx = obj1.getindex(None)
     assert (idx(0) == [0, 1, 2]).all()
 
-    assert obj.get_filename() == "myobj_c872.hkl"
+    assert obj.get_filename() == "myobj_3475.hkl"
     obj.save()
     assert os.path.isfile(obj.get_filename())
-    obj7 = MyObj(loadFrom="myobj_c872.hkl")
+    obj7 = MyObj(loadFrom="myobj_3475.hkl")
     assert obj7.args["bins"] == obj.args["bins"]
     assert obj7.dirs == obj.dirs
 
-    obj8 = MyObj(loadFrom=["myobj_c872.hkl",
+    obj8 = MyObj(loadFrom=["myobj_3475.hkl",
                            "something_else.hkl"])
 
     assert obj8.dirs == obj.dirs
