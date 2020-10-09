@@ -107,6 +107,9 @@ class DPObject():
                     else:
                         # unable to find for both hashing methods, create object, saving as new hash
                         fname = self.get_filename()                    # create object
+                        # decrement redoLevel here
+                        kwargs["redoLevel"] = max(0, kwargs.get("redoLevel", 0) - 1)
+                        kwargs["saveLeveL"] = max(0, kwargs.get("saveLevel", 0) - 1)
                         self.create(*args, **kwargs)
                         if self.dirs and saveLevel > 0:
                             self.save()
