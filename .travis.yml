@@ -10,7 +10,6 @@ before_install:
     - pip install pytest-ordering==0.5
 
 install:
-    - pip install -r requirements.txt
     - pip install .
 
 script:
