@@ -9,4 +9,11 @@ setup(name="DataProcessingTools",
       license="MIT",
       packages=["DataProcessingTools"],
       package_data={"DataProcessingTools": ["config.json"]},
+      install_requires=["numpy",
+                        "scipy",
+                        "matplotlib",
+                        "h5py < 3",
+                        "hickle",
+                        "pathlib"]
+
       )
