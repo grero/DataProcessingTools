@@ -203,7 +203,7 @@ class DPObject():
             if l not in unique_names:
                 unique_names.append(l)
 
-        idx = np.zeros((len(self.setidx), ), dtype=np.int)
+        idx = np.zeros((len(self.setidx), ), dtype=np.int64)
         for i in range(len(self.setidx)):
             idx[i] = unique_names.index(level_names[self.setidx[i]])
 
