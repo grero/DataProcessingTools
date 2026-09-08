@@ -246,16 +246,17 @@ class DPObject():
         
         data = hickle.load(fname)
         for (k, v) in data.items():
-            if k == "args":
+            ks = k.strip("'")
+            if ks == "args":
                 self.args = v
-            elif k == "dirs":
+            elif ks == "dirs":
                 self.dirs = []
                 for d in v:
                     self.dirs.append(str(pathlib.Path(d)))
-            elif k == "indexer":
+            elif ks == "indexer":
                 pass
             else:
-                setattr(self, k, v)
+                setattr(self, ks, v)
 
     def save(self, fname=None):
         if fname is None:
